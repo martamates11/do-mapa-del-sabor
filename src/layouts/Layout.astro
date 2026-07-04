@@ -1,0 +1,43 @@
+---
+import '../style.css';
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫒</text></svg>" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="D.O. El Mapa del Sabor — inicio">
+        <svg class="sello" viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3 4" />
+          <circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <text x="32" y="40" text-anchor="middle" font-size="22" font-family="Georgia, serif" fill="currentColor">D.O.</text>
+        </svg>
+        <span class="brand-name">El Mapa <em>del</em> Sabor</span>
+      </a>
+      <p class="brand-claim">Denominaciones de origen de España</p>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="pie">
+      <p>
+        Proyecto pedagógico en construcción. Fuente de referencia:
+        <a href="https://www.mapa.gob.es/es/alimentacion/temas/calidad-diferenciada/dop-igp" target="_blank" rel="noopener">
+          Ministerio de Agricultura, Pesca y Alimentación — Calidad diferenciada DOP/IGP</a>.
+        Los sellos DOP, IGP y ETG son figuras de calidad de la Unión Europea; este sitio es divulgativo y no
+        representa a los consejos reguladores.
+      </p>
+    </footer>
+  </body>
+</html>

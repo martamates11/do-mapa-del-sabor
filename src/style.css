@@ -361,6 +361,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 .producto {
   width: 100%;
   text-align: left;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -396,61 +397,6 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 
 /* resultados de búsqueda */
 .resultado-region { font-size: 0.72rem; color: var(--ink-3); flex-shrink: 0; }
-
-/* ————— ficha (modal) ————— */
-
-#ficha {
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radio) + 6px);
-  background: var(--bg-raised);
-  color: var(--ink);
-  padding: 0;
-  max-width: 560px;
-  width: calc(100vw - 2rem);
-  box-shadow: 0 30px 90px -20px rgba(0, 0, 0, 0.8);
-}
-
-#ficha::backdrop { background: rgba(12, 6, 9, 0.72); backdrop-filter: blur(3px); }
-
-.ficha-cuerpo { padding: 1.6rem 1.7rem 1.4rem; }
-
-.ficha-cats { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-.ficha-icono { font-size: 1.7rem; }
-
-.ficha-cuerpo h2 { font-family: var(--serif); font-weight: 500; font-size: 1.75rem; margin: 0.2rem 0 0.3rem; }
-
-.ficha-region { color: var(--ink-3); font-size: 0.88rem; margin: 0 0 0.9rem; }
-
-.ficha-desc { color: var(--ink-2); margin: 0 0 1.2rem; font-size: 1.02rem; }
-
-.ficha-proximamente { display: grid; gap: 0.6rem; margin-bottom: 1.2rem; }
-
-.proximo {
-  display: flex;
-  gap: 0.7rem;
-  align-items: center;
-  border: 1px dashed var(--line);
-  border-radius: 12px;
-  padding: 0.7rem 0.9rem;
-  color: var(--ink-3);
-  font-size: 0.88rem;
-}
-
-.proximo .px-icono { font-size: 1.3rem; }
-.proximo strong { color: var(--ink-2); display: block; font-size: 0.92rem; }
-
-.cerrar {
-  font: inherit;
-  background: var(--oro);
-  color: #2a1a08;
-  font-weight: 600;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.4rem;
-  cursor: pointer;
-}
-
-.cerrar:hover { filter: brightness(1.08); }
 
 /* ————— pie ————— */
 

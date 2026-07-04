@@ -1,0 +1,102 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { CATEGORIAS, NOMBRES_CCAA } from '../../data/productos.js';
+import { PRODUCTOS_INDEXADOS } from '../../data/productos-indexados.js';
+
+export function getStaticPaths() {
+  return PRODUCTOS_INDEXADOS.map((p) => ({
+    params: { slug: p.slug },
+    props: { producto: p },
+  }));
+}
+
+const { producto } = Astro.props;
+const cat = CATEGORIAS[producto.c];
+const regiones = producto.ccaa.map((id) => NOMBRES_CCAA[id] || id);
+
+const titulo = `${producto.n} — ${producto.t} · El Mapa del Sabor`;
+const descripcion = producto.d;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: producto.n,
+  description: producto.d,
+  category: cat.nombre,
+  additionalProperty: [
+    { '@type': 'PropertyValue', name: 'Figura de calidad', value: producto.t },
+    { '@type': 'PropertyValue', name: 'Comunidades autónomas', value: regiones.join(', ') },
+  ],
+};
+---
+
+<Layout title={titulo} description={descripcion}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <article class="ficha-pagina">
+    <a class="volver" href="/">← Ver el mapa</a>
+
+    <div class="ficha-cats">
+      <span class="ficha-icono" aria-hidden="true">{cat.icono}</span>
+      <span class={`badge badge-${producto.t}`}>{producto.t}</span>
+    </div>
+
+    <h1>{producto.n}</h1>
+    <p class="ficha-region">📍 {regiones.join(' · ')} · {cat.nombre}</p>
+    <p class="ficha-desc">{producto.d}</p>
+
+    <div class="ficha-proximamente">
+      <div class="proximo">
+        <span class="px-icono">🎬</span>
+        <span><strong>Vídeo del proceso de elaboración</strong>Disponible próximamente en esta ficha.</span>
+      </div>
+      <div class="proximo">
+        <span class="px-icono">🛒</span>
+        <span><strong>Compra directa al productor</strong>En preparación: convenios con tiendas y consejos reguladores.</span>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .ficha-pagina {
+    max-width: 640px;
+    margin: 2rem auto 3rem;
+    padding: 0 1rem;
+  }
+
+  .volver {
+    display: inline-block;
+    color: var(--oro);
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-bottom: 1.2rem;
+  }
+
+  .volver:hover { text-decoration: underline; }
+
+  .ficha-cats { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .ficha-icono { font-size: 1.7rem; }
+
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 2.1rem; margin: 0.2rem 0 0.3rem; }
+
+  .ficha-region { color: var(--ink-3); font-size: 0.92rem; margin: 0 0 1rem; }
+
+  .ficha-desc { color: var(--ink-2); margin: 0 0 1.4rem; font-size: 1.08rem; }
+
+  .ficha-proximamente { display: grid; gap: 0.6rem; }
+
+  .proximo {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 0.7rem 0.9rem;
+    color: var(--ink-3);
+    font-size: 0.88rem;
+  }
+
+  .proximo .px-icono { font-size: 1.3rem; }
+  .proximo strong { color: var(--ink-2); display: block; font-size: 0.92rem; }
+</style>
