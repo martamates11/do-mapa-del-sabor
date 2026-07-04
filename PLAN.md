@@ -265,3 +265,32 @@ No producir contenido propio en esta fase. El objetivo inicial es conseguir
 que algún Consejo Regulador ceda material ya existente. Si en 3-4 semanas
 ninguno responde con material, es el momento de valorar alternativas
 (colaboración con un ciclo de audiovisuales, ayuntamientos, etc.) — no antes.
+
+### 10.6 Modelo de comisión y cómo se atribuye una venta
+
+**Modelo elegido**: comisión sobre venta realizada (5-15% según categoría),
+no cuota fija mensual ni pago por visita — es lo único que no supone riesgo
+para el productor en un primer contacto en frío, y es coherente con
+ofrecerle visibilidad gratuita desde el principio (ver 10.3).
+
+**Cómo se identifica que una venta viene de aquí** — de menos a más fiable:
+
+1. **Enlace con parámetro de referencia (implementado)**: cada enlace de
+   "comprar" añade automáticamente `?ref=elmapadelsabor` a la URL de la
+   tienda, sin que el cliente tenga que hacer ni escribir nada. Así el
+   productor puede identificar el tráfico en su propia analítica (Google
+   Analytics o similar). Ver `src/lib/enlaces.js` (función `conReferencia`)
+   y `src/pages/productos/[slug].astro`, que la aplica en cuanto el producto
+   tiene `tienda_afiliada_url` en el dataset — hasta entonces sigue
+   mostrando el aviso "en preparación".
+2. **Código de referencia manual** (sin descuento asociado, para no apilar
+   descuento + comisión): opción de respaldo si el productor no tiene
+   analítica web, para que pueda identificar el pedido a mano.
+3. **Límite conocido**: ambas opciones dependen de que el productor consulte
+   y comunique el dato — no hay verificación automática de la venta en sí.
+   Eliminarlo del todo exigiría una red de afiliación con píxel de
+   conversión (necesita capacidad técnica del productor) o pasar el pago por
+   una plataforma propia tipo marketplace (Stripe Connect) — ninguna de las
+   dos es realista en la fase de piloto con productores artesanales
+   pequeños; revisar solo si algún productor concreto empieza a mover
+   volumen relevante.

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { CATEGORIAS, NOMBRES_CCAA } from '../../data/productos.js';
 import { PRODUCTOS_INDEXADOS } from '../../data/productos-indexados.js';
+import { conReferencia } from '../../lib/enlaces.js';
 
 export function getStaticPaths() {
   return PRODUCTOS_INDEXADOS.map((p) => ({
@@ -50,10 +51,17 @@ const jsonLd = {
         <span class="px-icono">🎬</span>
         <span><strong>Vídeo del proceso de elaboración</strong>Disponible próximamente en esta ficha.</span>
       </div>
-      <div class="proximo">
-        <span class="px-icono">🛒</span>
-        <span><strong>Compra directa al productor</strong>En preparación: convenios con tiendas y consejos reguladores.</span>
-      </div>
+      {producto.tienda_afiliada_url ? (
+        <a class="proximo comprar" href={conReferencia(producto.tienda_afiliada_url)} target="_blank" rel="noopener sponsored">
+          <span class="px-icono">🛒</span>
+          <span><strong>Comprar en la tienda oficial</strong>Serás redirigido a la tienda del productor.</span>
+        </a>
+      ) : (
+        <div class="proximo">
+          <span class="px-icono">🛒</span>
+          <span><strong>Compra directa al productor</strong>En preparación: convenios con tiendas y consejos reguladores.</span>
+        </div>
+      )}
     </div>
   </article>
 </Layout>
@@ -99,4 +107,15 @@ const jsonLd = {
 
   .proximo .px-icono { font-size: 1.3rem; }
   .proximo strong { color: var(--ink-2); display: block; font-size: 0.92rem; }
+
+  a.proximo.comprar {
+    text-decoration: none;
+    cursor: pointer;
+    border-style: solid;
+    border-color: var(--oro-suave);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  a.proximo.comprar:hover { border-color: var(--oro); transform: translateY(-1px); }
+  a.proximo.comprar strong { color: var(--oro); }
 </style>
