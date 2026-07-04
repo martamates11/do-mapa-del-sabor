@@ -31,7 +31,7 @@ Ministerio de Agricultura, Pesca y Alimentación (MAPA):
 
 | Decisión | Resultado |
 |---|---|
-| Repositorio | Repo nuevo e independiente (pendiente de creación) |
+| Repositorio | Repo nuevo e independiente: `martamates11/do-mapa-del-sabor` (ya creado, desplegado en Vercel) |
 | Vídeo pedagógico en el MVP | **No** — se añade en una fase posterior |
 | Alcance de datos del MVP | **Completo**: los 393 productos desde el inicio, aunque muchas fichas empiecen con contenido mínimo |
 
@@ -125,3 +125,49 @@ filtro secundario.
 3. Empezar en paralelo el contacto con consejos reguladores/tiendas para
    convenios comerciales (Fase 3), dado que es lo que más tiempo tardará.
 4. Con el dataset listo, arrancar el desarrollo del MVP (Fase 1).
+
+## 9. Objetivo a largo plazo: tráfico internacional y monetización
+
+Si el objetivo final no es solo un proyecto pedagógico sino una web con
+tráfico internacional relevante que genere ventas reales, esto añade una
+capa de trabajo sobre las fases de la sección 6.
+
+### 9.1 SEO técnico (condición previa a cualquier tráfico)
+- Cada producto necesita URL propia indexable por buscadores — **ya
+  implementado**: el sitio se migró de Vite vanilla a Astro con generación
+  estática, una página por producto (`/productos/[slug]`) con metadatos y
+  `schema.org/Product`, y sitemap automático.
+- Pendiente: contenido enriquecido por producto (hoy las fichas tienen
+  descripción mínima), que es lo que realmente posiciona en buscadores de
+  cola larga.
+
+### 9.2 Internacionalización
+- Decidir la estructura de idiomas (`/es/`, `/en/`, ...) antes de escalar el
+  dataset a los 393 productos, para no reescribir rutas y contenido dos veces.
+- Traducir contenido real, no solo la interfaz.
+- Adaptar pagos/envíos internacionales si en algún momento hay tienda propia
+  (o dejarlo del lado de las tiendas afiliadas).
+
+### 9.3 Tráfico
+- SEO de contenido: blog, guías regionales, rutas gastronómicas — contenido
+  que la gente busca y comparte.
+- Distribución: redes sociales, partnerships con turismo/gastronomía, prensa
+  especializada.
+- El tráfico orgánico tarda meses en madurar; no depende solo del desarrollo.
+
+### 9.4 Monetización (en paralelo, cuanto antes — ver Fase 3 y riesgo 4)
+- Convenios de afiliación/venta directa con consejos reguladores y tiendas,
+  empezando por 10-20 productos "estrella".
+- Modelo de ingresos mixto a futuro: afiliación + posible publicidad +
+  newsletter/membership.
+
+### 9.5 Bloqueos legales a resolver antes de escalar (ver también sección 7)
+- Uso de sellos DOP/IGP oficiales: requiere autorización del consejo
+  regulador correspondiente.
+- Normativa de comercio electrónico y protección de datos distinta por país
+  si se opera internacionalmente (IVA, GDPR/CCPA...).
+
+**Orden recomendado**: completar el dataset (Fase 0) en paralelo a iniciar
+las conversaciones comerciales (Fase 3) — son las dos tareas de mayor
+duración y no dependen la una de la otra. El SEO y la captación de tráfico
+no tienen sentido hasta que el contenido esté completo e indexable.
