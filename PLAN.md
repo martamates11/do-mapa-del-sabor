@@ -171,3 +171,97 @@ capa de trabajo sobre las fases de la sección 6.
 las conversaciones comerciales (Fase 3) — son las dos tareas de mayor
 duración y no dependen la una de la otra. El SEO y la captación de tráfico
 no tienen sentido hasta que el contenido esté completo e indexable.
+
+## 10. Piloto Extremadura: vídeo y proveedores
+
+Extremadura es la comunidad elegida para arrancar en la práctica las Fases 2
+(vídeo) y 3 (comercial) de la sección 6, con sus 12 productos ya cargados en
+el dataset como banco de pruebas antes de escalar al resto de comunidades.
+
+### 10.1 Directorio de Consejos Reguladores
+
+Un Consejo Regulador cubre a todos los productores de su DOP/IGP de golpe,
+así que es el interlocutor prioritario frente a productores individuales.
+Contactos localizados (verificar vigencia antes de escribir, la información
+puede quedar desactualizada):
+
+| Producto | Consejo Regulador | Email | Teléfono | Web |
+|---|---|---|---|---|
+| Torta del Casar | DOP Torta del Casar | info@tortadelcasar.eu | 927 29 07 13 | tortadelcasar.eu |
+| Queso de la Serena | DOP Queso de la Serena | info@quesoserena.com | 924 77 21 14 | quesoserena.com |
+| Queso Ibores | DOP Queso Ibores | quesoibores@quesoibores.org | 927 32 30 76 | quesoibores.org |
+| Dehesa de Extremadura | DOP Dehesa de Extremadura | info@dehesa-extremadura.com | 924 33 02 03 | dehesa-extremadura.com |
+| Ternera de Extremadura | IGP Ternera de Extremadura | consejoregulador@terneradeextremadura.org | 927 62 91 46 | terneradeextremadura.org |
+| Cordero de Extremadura | IGP Cordero de Extremadura (Corderex) | corderex@corderex.com | 924 31 03 06 | corderex.com |
+| Pimentón de la Vera | DOP Pimentón de la Vera | info@pimentonvera-origen.com | 927 17 02 72 | pimentonvera-origen.com |
+| Aceite Gata-Hurdes | DOP Gata-Hurdes | gatahurdes@gmail.com | 927 41 70 91 | dopgatahurdes.com |
+| Aceite Monterrubio | DOP Aceite Monterrubio | info@aceitemonterrubiodop.com | 924 63 53 71 | aceitemonterrubiodop.com |
+| Miel Villuercas-Ibores | DOP Miel Villuercas-Ibores | crdomielvilluercasibores@gmail.com | 927 36 93 48 | mielvilluercasibores.eu |
+| Cereza del Jerte | DOP Cereza del Jerte | picota@cerezadeljerte.org | 927 47 11 01 | cerezadeljerte.org |
+| Ribera del Guadiana | DOP Ribera del Guadiana | info@riberadelguadiana.eu | 924 67 13 02 | riberadelguadiana.eu |
+
+### 10.2 Orden de contacto
+
+No escribir a los 12 a la vez. Empezar por los 3 con más actividad digital
+propia (web cuidada, redes sociales activas), que son los que más
+probabilidad de respuesta rápida tienen:
+1. Cereza del Jerte
+2. Torta del Casar
+3. Dehesa de Extremadura
+
+Aprender del primer intercambio (qué piden ellos, qué dudas tienen) antes de
+escalar el envío a los otros 9.
+
+### 10.3 Un único email cubre vídeo y convenio comercial a la vez
+
+No conviene separar en dos correos. La plantilla de primer contacto debe:
+- Presentar el proyecto con el enlace a la web ya publicada (prueba social).
+- Pedir material que ya exista (fotos, vídeo institucional) con permiso de
+  uso explícito — así se resuelve la Fase 2 sin coste de producción.
+- Plantear la posibilidad de visibilidad + futura afiliación comercial, sin
+  comprometerse a nada todavía — abre la puerta a la Fase 3.
+
+**Plantilla:**
+
+> Asunto: Colaboración con "El Mapa del Sabor" — proyecto sobre las
+> denominaciones de origen de España
+>
+> Estimado Consejo Regulador de [PRODUCTO]:
+>
+> Me pongo en contacto desde "El Mapa del Sabor"
+> (do-mapa-del-sabor.vercel.app), un proyecto que recoge en un mapa
+> interactivo los productos españoles con Denominación de Origen Protegida,
+> Indicación Geográfica Protegida y Especialidad Tradicional Garantizada,
+> región a región. [PRODUCTO] ya tiene su propia ficha en el proyecto:
+> [ENLACE A LA FICHA].
+>
+> Escribo por dos motivos:
+>
+> 1. Nos gustaría poder mostrar en la ficha el proceso de elaboración de
+>    [PRODUCTO]. Si el Consejo Regulador dispone de fotografías o vídeo
+>    institucional, ¿sería posible obtener autorización para usarlo en la
+>    ficha, citando siempre la fuente?
+> 2. A medio plazo, el proyecto contempla añadir enlaces de compra directa a
+>    tiendas de los productores con convenio. Si os interesa explorar esta
+>    posibilidad más adelante, encantados de mantener una conversación,
+>    sin ningún compromiso por ahora.
+>
+> Quedamos a la espera de vuestra respuesta y de la persona de contacto más
+> adecuada para seguir esta conversación.
+>
+> Un cordial saludo,
+> [NOMBRE]
+
+### 10.4 Seguimiento
+
+Antes del primer envío, crear una hoja de cálculo con columnas: Producto ·
+Contactado (fecha) · Respuesta · Material recibido · Estado convenio
+(sin_contactar / en_negociación / acuerdo_cerrado, igual que el campo
+`estado_convenio` del modelo de datos de la sección 5).
+
+### 10.5 Sin presupuesto de vídeo propio
+
+No producir contenido propio en esta fase. El objetivo inicial es conseguir
+que algún Consejo Regulador ceda material ya existente. Si en 3-4 semanas
+ninguno responde con material, es el momento de valorar alternativas
+(colaboración con un ciclo de audiovisuales, ayuntamientos, etc.) — no antes.
