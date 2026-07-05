@@ -1,0 +1,53 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import { PRODUCTOS_INDEXADOS } from '../../data/productos-indexados.js';
+import { obtenerClics } from '../../lib/contador.js';
+
+const clave = Astro.url.searchParams.get('clave');
+const autorizado = Boolean(import.meta.env.CLAVE_ADMIN) && clave === import.meta.env.CLAVE_ADMIN;
+
+let filas = [];
+if (autorizado) {
+  const conTienda = PRODUCTOS_INDEXADOS.filter((p) => p.tienda_afiliada_url);
+  const clics = await obtenerClics(conTienda.map((p) => p.slug));
+  filas = conTienda
+    .map((p) => ({ nombre: p.n, slug: p.slug, clics: clics[p.slug] || 0 }))
+    .sort((a, b) => b.clics - a.clics);
+}
+---
+
+<Layout title="Clics por producto · El Mapa del Sabor" description="Panel interno de seguimiento">
+  <div class="admin">
+    {autorizado ? (
+      <>
+        <h1>Clics en "Comprar en la tienda oficial"</h1>
+        {filas.length === 0 ? (
+          <p>Todavía no hay ningún producto con tienda afiliada configurada.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Clics</th></tr>
+            </thead>
+            <tbody>
+              {filas.map((f) => (
+                <tr><td>{f.nombre}</td><td>{f.clics}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </>
+    ) : (
+      <p>Acceso no autorizado.</p>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .admin { max-width: 640px; margin: 2rem auto 3rem; padding: 0 1rem; color: var(--ink); }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 1.6rem; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th, td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink-3); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+</style>

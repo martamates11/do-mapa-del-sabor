@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import { CATEGORIAS, NOMBRES_CCAA } from '../../data/productos.js';
 import { PRODUCTOS_INDEXADOS } from '../../data/productos-indexados.js';
-import { conReferencia } from '../../lib/enlaces.js';
 
 export function getStaticPaths() {
   return PRODUCTOS_INDEXADOS.map((p) => ({
@@ -52,7 +51,7 @@ const jsonLd = {
         <span><strong>Vídeo del proceso de elaboración</strong>Disponible próximamente en esta ficha.</span>
       </div>
       {producto.tienda_afiliada_url ? (
-        <a class="proximo comprar" href={conReferencia(producto.tienda_afiliada_url)} target="_blank" rel="noopener sponsored">
+        <a class="proximo comprar" href={`/salida/${producto.slug}`} target="_blank" rel="noopener sponsored">
           <span class="px-icono">🛒</span>
           <span><strong>Comprar en la tienda oficial</strong>Serás redirigido a la tienda del productor.</span>
         </a>
