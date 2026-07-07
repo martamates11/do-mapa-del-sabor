@@ -9,12 +9,16 @@ const clave = Astro.url.searchParams.get('clave');
 const autorizado = Boolean(import.meta.env.CLAVE_ADMIN) && clave === import.meta.env.CLAVE_ADMIN;
 
 let filas = [];
+let total = 0;
+let max = 1;
 if (autorizado) {
   const conTienda = PRODUCTOS_INDEXADOS.filter((p) => p.tienda_afiliada_url);
   const clics = await obtenerClics(conTienda.map((p) => p.slug));
   filas = conTienda
-    .map((p) => ({ nombre: p.n, slug: p.slug, clics: clics[p.slug] || 0 }))
+    .map((p) => ({ nombre: p.n, tipo: p.t, clics: clics[p.slug] || 0 }))
     .sort((a, b) => b.clics - a.clics);
+  total = filas.reduce((suma, f) => suma + f.clics, 0);
+  max = Math.max(1, ...filas.map((f) => f.clics));
 }
 ---
 
@@ -22,32 +26,146 @@ if (autorizado) {
   <div class="admin">
     {autorizado ? (
       <>
-        <h1>Clics en "Comprar en la tienda oficial"</h1>
+        <header class="admin-header">
+          <p class="eyebrow">Panel interno</p>
+          <h1>Clics en "Comprar en la tienda oficial"</h1>
+          <p class="lead">Cuántas veces se ha pulsado el botón de compra de cada producto, contado desde el propio sitio.</p>
+        </header>
+
         {filas.length === 0 ? (
-          <p>Todavía no hay ningún producto con tienda afiliada configurada.</p>
+          <div class="vacio">
+            <span class="vacio-icono" aria-hidden="true">🛒</span>
+            <p>Todavía no hay ningún producto con tienda afiliada configurada.</p>
+          </div>
         ) : (
-          <table>
-            <thead>
-              <tr><th>Producto</th><th>Clics</th></tr>
-            </thead>
-            <tbody>
+          <>
+            <div class="stats-row">
+              <div class="stat">
+                <span class="num">{total}</span>
+                <span class="lbl">Clics totales</span>
+              </div>
+              <div class="stat">
+                <span class="num">{filas.length}</span>
+                <span class="lbl">Con tienda activa</span>
+              </div>
+              <div class="stat">
+                <span class="num">{filas[0]?.clics ?? 0}</span>
+                <span class="lbl">Del más pedido</span>
+              </div>
+            </div>
+
+            <ol class="ranking">
               {filas.map((f) => (
-                <tr><td>{f.nombre}</td><td>{f.clics}</td></tr>
+                <li>
+                  <div class="fila">
+                    <span class={`badge badge-${f.tipo}`}>{f.tipo}</span>
+                    <span class="nombre">{f.nombre}</span>
+                    <span class="r-num">{f.clics}</span>
+                  </div>
+                  <div class="barra-fondo">
+                    <div class="barra" style={`width:${(f.clics / max) * 100}%`}></div>
+                  </div>
+                </li>
               ))}
-            </tbody>
-          </table>
+            </ol>
+          </>
         )}
       </>
     ) : (
-      <p>Acceso no autorizado.</p>
+      <div class="vacio">
+        <span class="vacio-icono" aria-hidden="true">🔒</span>
+        <p>Acceso no autorizado.</p>
+      </div>
     )}
   </div>
 </Layout>
 
 <style>
   .admin { max-width: 640px; margin: 2rem auto 3rem; padding: 0 1rem; color: var(--ink); }
-  h1 { font-family: var(--serif); font-weight: 500; font-size: 1.6rem; }
-  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-  th, td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); }
-  th { color: var(--ink-3); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .admin-header { margin-bottom: 1.6rem; }
+
+  .eyebrow {
+    margin: 0 0 0.3rem;
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 1.7rem; margin: 0 0 0.4rem; }
+
+  .lead { color: var(--ink-2); font-size: 0.95rem; margin: 0; max-width: 50ch; }
+
+  .stats-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1.4rem 0 1.8rem; }
+
+  .stat {
+    min-width: 120px;
+    padding: 0.7rem 1.1rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radio);
+  }
+
+  .stat .num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    color: var(--oro);
+    line-height: 1.15;
+  }
+
+  .stat .lbl { font-size: 0.7rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .ranking { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+
+  .ranking li {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .fila { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+
+  .nombre { flex: 1; font-size: 0.92rem; }
+
+  .r-num { font-family: var(--serif); color: var(--oro); font-size: 1.05rem; min-width: 1.5rem; text-align: right; }
+
+  .badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.42rem;
+    border-radius: 999px;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+
+  .badge-DOP { color: #eab04a; border-color: var(--dop); background: color-mix(in oklab, var(--dop) 22%, transparent); }
+  .badge-IGP { color: #a8d18a; border-color: var(--igp); background: color-mix(in oklab, var(--igp) 22%, transparent); }
+  .badge-ETG { color: #9dc1f0; border-color: var(--etg); background: color-mix(in oklab, var(--etg) 22%, transparent); }
+
+  .barra-fondo { height: 5px; border-radius: 999px; background: var(--bg-sunken); overflow: hidden; }
+
+  .barra {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--oro-suave), var(--oro));
+  }
+
+  .vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+    color: var(--ink-3);
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .vacio-icono { font-size: 2rem; }
 </style>
