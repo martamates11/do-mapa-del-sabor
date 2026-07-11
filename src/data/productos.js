@@ -207,7 +207,7 @@ export const PRODUCTOS = [
   { n: 'Aceite Gata-Hurdes', t: 'DOP', c: 'aceite', ccaa: ['11'], d: 'Virgen extra de manzanilla cacereña.' },
   { n: 'Aceite Monterrubio', t: 'DOP', c: 'aceite', ccaa: ['11'], d: 'Virgen extra de la Serena y la Siberia.' },
   { n: 'Miel Villuercas-Ibores', t: 'DOP', c: 'dulce', ccaa: ['11'], d: 'Mieles de monte de colmenares cacereños.' },
-  { n: 'Cereza del Jerte', t: 'DOP', c: 'fruta', ccaa: ['11'], d: 'Picota del valle que florece en blanco cada primavera.' },
+  { n: 'Cereza del Jerte', t: 'DOP', c: 'fruta', ccaa: ['11'], d: 'Picota del valle que florece en blanco cada primavera.', video_url: 'https://youtu.be/-dvLp1V8Pjs' },
   { n: 'Ribera del Guadiana', t: 'DOP', c: 'vino', ccaa: ['11'], d: 'Vinos de Tierra de Barros y las vegas del Guadiana.' },
 
   // ——— Galicia (12) ———
