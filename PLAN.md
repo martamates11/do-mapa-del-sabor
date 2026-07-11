@@ -325,3 +325,22 @@ usuario).
 **Consulta de resultados**: `/admin/clics?clave=LA_CLAVE_ELEGIDA` — tabla con
 el número de clics por producto, ordenada de más a menos. Sin la clave
 correcta, la página no muestra ningún dato.
+
+### 10.8 Vídeo del proceso de elaboración (implementado)
+
+**Decisión**: vídeo incrustado de YouTube (modo de privacidad reforzada,
+dominio `youtube-nocookie.com`), no un simple enlace que saque de la ficha.
+Motivos: cero coste de alojamiento/ancho de banda (a diferencia de servir
+vídeo propio, inviable en Vercel para archivos pesados), y si un Consejo
+Regulador cede vídeo institucional lo más probable es que ya esté publicado
+en su propio canal de YouTube — en ese caso solo hace falta embeberlo, sin
+subir nada. Si en cambio ceden un archivo en bruto sin publicar, subirlo a
+un canal de YouTube propio del proyecto es la vía más simple.
+
+**Cómo funciona**: en cuanto un producto tiene `video_url` en el dataset
+(admite watch?v=, youtu.be/, shorts/ o el ID directo — ver
+`src/lib/video.js`), la ficha muestra el reproductor embebido en vez del
+aviso "próximamente". El modo `youtube-nocookie.com` evita cargar cookies de
+terceros hasta que el usuario le da al play, lo que simplifica el futuro
+aviso de cookies de la web (pendiente, ver riesgo de la LSSI-CE mencionado
+al hablar del aviso legal).
