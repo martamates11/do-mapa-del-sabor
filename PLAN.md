@@ -279,9 +279,9 @@ ofrecerle visibilidad gratuita desde el principio (ver 10.3).
    "comprar" añade automáticamente `?ref=elmapadelsabor` a la URL de la
    tienda, sin que el cliente tenga que hacer ni escribir nada. Así el
    productor puede identificar el tráfico en su propia analítica (Google
-   Analytics o similar). Ver `src/lib/enlaces.js` (función `conReferencia`)
-   y `src/pages/productos/[slug].astro`, que la aplica en cuanto el producto
-   tiene `tienda_afiliada_url` en el dataset — hasta entonces sigue
+   Analytics o similar). Ver `src/lib/enlaces.js` (función `conReferencia`),
+   aplicada desde `src/pages/salida/[slug].js` — se activa en cuanto el
+   producto tiene `tienda_afiliada_url` en el dataset; hasta entonces sigue
    mostrando el aviso "en preparación".
 2. **Código de referencia manual** (sin descuento asociado, para no apilar
    descuento + comisión): opción de respaldo si el productor no tiene
@@ -294,3 +294,53 @@ ofrecerle visibilidad gratuita desde el principio (ver 10.3).
    dos es realista en la fase de piloto con productores artesanales
    pequeños; revisar solo si algún productor concreto empieza a mover
    volumen relevante.
+
+### 10.7 Contador propio de clics (implementado)
+
+Además de lo que registre la analítica del productor, el proyecto lleva su
+propio contador de clics en el botón "Comprar en la tienda oficial", **más
+fiable que un contador basado en JavaScript de cliente** (tipo Google
+Analytics) porque un bloqueador de anuncios no impide una navegación normal
+dentro del propio dominio, solo las peticiones de scripts de analítica de
+terceros.
+
+**Cómo funciona**: el botón de compra ya no enlaza directo a la tienda, sino
+a `/salida/[slug]` (`src/pages/salida/[slug].js`), una ruta de servidor
+(`prerender = false`, el resto del sitio sigue siendo 100% estático) que
+incrementa un contador y redirige (302) a la tienda con la referencia ya
+añadida. El contador se guarda en Redis (Upstash) a través de
+`src/lib/contador.js` — si esa base de datos no está conectada todavía, la
+redirección funciona igual, simplemente sin contar (no bloquea nunca al
+usuario).
+
+**Pendiente de configurar en Vercel** (proyecto `do-mapa-del-sabor`):
+1. Conectar una base de datos Redis desde el Marketplace de Vercel
+   (Storage → Create Database → Redis/Upstash). Al conectarla, Vercel añade
+   automáticamente las variables de entorno que lee `contador.js`
+   (`KV_REST_API_URL` / `KV_REST_API_TOKEN`, o el nombrado `UPSTASH_REDIS_REST_*`
+   según la integración).
+2. Añadir una variable de entorno `CLAVE_ADMIN` (a elegir, no debe ser
+   pública) para poder consultar el panel de resultados.
+
+**Consulta de resultados**: `/admin/clics?clave=LA_CLAVE_ELEGIDA` — tabla con
+el número de clics por producto, ordenada de más a menos. Sin la clave
+correcta, la página no muestra ningún dato.
+
+### 10.8 Vídeo del proceso de elaboración (implementado)
+
+**Decisión**: vídeo incrustado de YouTube (modo de privacidad reforzada,
+dominio `youtube-nocookie.com`), no un simple enlace que saque de la ficha.
+Motivos: cero coste de alojamiento/ancho de banda (a diferencia de servir
+vídeo propio, inviable en Vercel para archivos pesados), y si un Consejo
+Regulador cede vídeo institucional lo más probable es que ya esté publicado
+en su propio canal de YouTube — en ese caso solo hace falta embeberlo, sin
+subir nada. Si en cambio ceden un archivo en bruto sin publicar, subirlo a
+un canal de YouTube propio del proyecto es la vía más simple.
+
+**Cómo funciona**: en cuanto un producto tiene `video_url` en el dataset
+(admite watch?v=, youtu.be/, shorts/ o el ID directo — ver
+`src/lib/video.js`), la ficha muestra el reproductor embebido en vez del
+aviso "próximamente". El modo `youtube-nocookie.com` evita cargar cookies de
+terceros hasta que el usuario le da al play, lo que simplifica el futuro
+aviso de cookies de la web (pendiente, ver riesgo de la LSSI-CE mencionado
+al hablar del aviso legal).

@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { CATEGORIAS, NOMBRES_CCAA } from '../../data/productos.js';
 import { PRODUCTOS_INDEXADOS } from '../../data/productos-indexados.js';
-import { conReferencia } from '../../lib/enlaces.js';
+import { embedYouTube } from '../../lib/video.js';
 
 export function getStaticPaths() {
   return PRODUCTOS_INDEXADOS.map((p) => ({
@@ -14,6 +14,7 @@ export function getStaticPaths() {
 const { producto } = Astro.props;
 const cat = CATEGORIAS[producto.c];
 const regiones = producto.ccaa.map((id) => NOMBRES_CCAA[id] || id);
+const video = producto.video_url ? embedYouTube(producto.video_url) : null;
 
 const titulo = `${producto.n} — ${producto.t} · El Mapa del Sabor`;
 const descripcion = producto.d;
@@ -46,13 +47,27 @@ const jsonLd = {
     <p class="ficha-region">📍 {regiones.join(' · ')} · {cat.nombre}</p>
     <p class="ficha-desc">{producto.d}</p>
 
-    <div class="ficha-proximamente">
-      <div class="proximo">
-        <span class="px-icono">🎬</span>
-        <span><strong>Vídeo del proceso de elaboración</strong>Disponible próximamente en esta ficha.</span>
+    {video && (
+      <div class="video-wrap">
+        <iframe
+          src={video}
+          title={`Vídeo del proceso de elaboración de ${producto.n}`}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
       </div>
+    )}
+
+    <div class="ficha-proximamente">
+      {!video && (
+        <div class="proximo">
+          <span class="px-icono">🎬</span>
+          <span><strong>Vídeo del proceso de elaboración</strong>Disponible próximamente en esta ficha.</span>
+        </div>
+      )}
       {producto.tienda_afiliada_url ? (
-        <a class="proximo comprar" href={conReferencia(producto.tienda_afiliada_url)} target="_blank" rel="noopener sponsored">
+        <a class="proximo comprar" href={`/salida/${producto.slug}`} target="_blank" rel="noopener sponsored">
           <span class="px-icono">🛒</span>
           <span><strong>Comprar en la tienda oficial</strong>Serás redirigido a la tienda del productor.</span>
         </a>
@@ -91,6 +106,24 @@ const jsonLd = {
   .ficha-region { color: var(--ink-3); font-size: 0.92rem; margin: 0 0 1rem; }
 
   .ficha-desc { color: var(--ink-2); margin: 0 0 1.4rem; font-size: 1.08rem; }
+
+  .video-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-sunken);
+    margin-bottom: 1.2rem;
+  }
+
+  .video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
 
   .ficha-proximamente { display: grid; gap: 0.6rem; }
 
