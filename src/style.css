@@ -117,25 +117,25 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 .lead { color: var(--ink-2); font-size: 1.05rem; max-width: 60ch; margin: 0 0 1.6rem; }
 .lead strong { color: var(--ink); font-weight: 600; }
 
-.stats-row { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+.stats-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
 .stat {
-  min-width: 122px;
-  padding: 0.7rem 1.1rem;
+  min-width: 68px;
+  padding: 0.3rem 0.5rem;
   background: var(--bg-raised);
   border: 1px solid var(--line);
-  border-radius: var(--radio);
+  border-radius: calc(var(--radio) * 0.6);
 }
 
 .stat .num {
   display: block;
   font-family: var(--serif);
-  font-size: 1.9rem;
+  font-size: 1rem;
   color: var(--oro);
   line-height: 1.15;
 }
 
-.stat .lbl { font-size: 0.74rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.12em; }
+.stat .lbl { font-size: 0.56rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* ————— filtros ————— */
 
@@ -195,7 +195,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 
 .explorer {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 2.3fr) minmax(280px, 0.9fr);
   gap: 1.2rem;
   align-items: start;
 }
@@ -218,12 +218,16 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   cursor: pointer;
   stroke: var(--bg-sunken);
   stroke-width: 1.1;
-  transition: filter 0.18s, opacity 0.18s;
+  transition: filter 0.18s, opacity 0.18s, transform 0.2s ease-out;
   outline: none;
 }
 
 .ccaa:hover, .ccaa:focus-visible {
   filter: brightness(1.35) drop-shadow(0 0 10px rgba(234, 176, 74, 0.55));
+}
+
+.ccaa.en-hover {
+  transform: scale(1.08);
 }
 
 .ccaa.seleccionada {
@@ -242,27 +246,77 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   pointer-events: none;
 }
 
-.tooltip {
+.productos-flotantes {
   position: absolute;
   pointer-events: none;
+  transform: translate(-50%, -50%);
   background: var(--bg-sunken);
   border: 1px solid var(--oro-suave);
   color: var(--ink);
-  padding: 0.45rem 0.75rem;
-  border-radius: 10px;
-  font-size: 0.85rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
   line-height: 1.35;
   box-shadow: var(--sombra);
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.12s, transform 0.12s;
-  z-index: 10;
-  max-width: 240px;
+  transition: opacity 0.15s;
+  z-index: 15;
+  max-width: 220px;
 }
 
-.tooltip.visible { opacity: 1; transform: translateY(0); }
-.tooltip .t-nombre { font-family: var(--serif); font-size: 1rem; color: var(--oro); display: block; }
-.tooltip .t-detalle { color: var(--ink-2); }
+.productos-flotantes.visible { opacity: 1; }
+
+.productos-flotantes .pf-nombre {
+  display: block;
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  color: var(--oro);
+  margin-bottom: 0.3rem;
+}
+
+.productos-flotantes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+.productos-flotantes li { color: var(--ink-2); }
+
+.productos-flotantes .pf-mas {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--ink-3);
+  font-size: 0.74rem;
+}
+
+.productos-flotantes .pf-vacio { margin: 0; color: var(--ink-3); font-style: italic; }
+
+.info-region {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  pointer-events: none;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  box-shadow: var(--sombra);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 16;
+  max-width: 200px;
+}
+
+.info-region.visible { opacity: 1; transform: translateY(0); }
+
+.info-region h3 {
+  margin: 0 0 0.45rem;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.info-region dl { margin: 0; display: grid; gap: 0.24rem; }
+.info-region dl > div { display: flex; justify-content: space-between; gap: 0.6rem; }
+.info-region dt { color: var(--ink-3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.info-region dd { margin: 0; color: var(--ink-2); font-size: 0.78rem; text-align: right; }
 
 .leyenda {
   display: flex;
