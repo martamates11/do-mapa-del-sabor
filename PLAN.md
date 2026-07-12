@@ -344,3 +344,40 @@ aviso "próximamente". El modo `youtube-nocookie.com` evita cargar cookies de
 terceros hasta que el usuario le da al play, lo que simplifica el futuro
 aviso de cookies de la web (pendiente, ver riesgo de la LSSI-CE mencionado
 al hablar del aviso legal).
+
+## 11. Mapa como elemento principal (implementado)
+
+Rediseño de la página de inicio para que el mapa sea el centro visual, con
+interactividad enriquecida en el hover.
+
+- **Tarjetas de estadísticas reducidas**: el bloque de "206 productos / DOP /
+  IGP / ETG / comunidades" pasa a un tamaño mucho más pequeño (padding y
+  tipografía reducidos a ~30-40% del original) para restar protagonismo
+  frente al mapa.
+- **Mapa más grande**: la proporción de la rejilla `explorer` pasa de
+  `1.5fr/1fr` a `2.3fr/0.9fr` (mapa/panel), agrandando el mapa de forma
+  proporcional al ser todo el layout responsivo (`viewBox` + `width:100%`).
+- **Región ampliada y en color llamativo al pasar el ratón**: cada región
+  escala ligeramente (`transform: scale(1.08)`) y cambia a color dorado con
+  resplandor, usando como `transform-origin` su propio centroide, ya
+  calculado por `tools/build-map.mjs` en `mapa-ccaa.js`. La región hover se
+  trae al frente del resto (`appendChild` la reordena en el SVG) para que no
+  quede tapada por sus vecinas. Esto y la tarjeta de datos (siguiente punto)
+  aparecen **al instante**.
+- **Categorías de la región, con un pequeño retraso**: la tarjeta anclada al
+  centroide de la región, en vez de listar cada producto, agrupa por
+  categoría (quesos, vinos, aceites…) con el nº de productos de cada una,
+  ordenadas de mayor a menor — solo se abre si el ratón se queda quieto
+  sobre la misma región durante 900ms; cualquier movimiento (incluso dentro
+  de la propia región) reinicia la cuenta atrás. Evita que la tarjeta
+  parpadee al simplemente cruzar el mapa. Ver `activarRegionHover()` /
+  `mostrarProductosFlotantes()` en `src/pages/index.astro`.
+- **Tarjeta de datos arriba a la izquierda**: nombre de la comunidad,
+  extensión (km²), altitud de la capital, clima y temperaturas máx./mín.
+  orientativas. Fuente: `src/data/datos-ccaa.js` — **valores aproximados de
+  cultura general geográfica, no cifras oficiales verificadas al detalle**;
+  si se necesita precisión (por ejemplo, para publicarlo como dato
+  "oficial"), contrastar con AEMET/INE antes de darlo por bueno.
+- Sustituye por completo el tooltip pequeño anterior (nombre + nº de
+  productos siguiendo al ratón), que quedaba redundante con esta información
+  más rica.

@@ -27,7 +27,8 @@ import Layout from '../layouts/Layout.astro';
     <div class="map-card">
       <div class="map-wrap">
         <svg id="mapa" role="group" aria-label="Mapa de España por comunidades autónomas"></svg>
-        <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
+        <div class="productos-flotantes" id="productosFlotantes" role="status" aria-hidden="true"></div>
+        <div class="info-region" id="infoRegion" role="status" aria-hidden="true"></div>
       </div>
       <div class="leyenda" id="leyenda" aria-hidden="true">
         <span class="leyenda-label">menos productos</span>
@@ -44,6 +45,7 @@ import Layout from '../layouts/Layout.astro';
   import { MAPA_VIEWBOX, CANARIAS_INSET, CCAA_PATHS } from '../data/mapa-ccaa.js';
   import { CATEGORIAS, NOMBRES_CCAA } from '../data/productos.js';
   import { PRODUCTOS_INDEXADOS as PRODUCTOS } from '../data/productos-indexados.js';
+  import { DATOS_CCAA } from '../data/datos-ccaa.js';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -150,6 +152,7 @@ import Layout from '../layouts/Layout.astro';
   svg.appendChild(inset);
 
   const elementosCCAA = new Map();
+  const centroides = new Map();
 
   for (const region of CCAA_PATHS) {
     if (!region.d) continue;
@@ -159,6 +162,10 @@ import Layout from '../layouts/Layout.astro';
     p.setAttribute('tabindex', '0');
     p.setAttribute('role', 'button');
     p.dataset.id = region.id;
+    if (region.centroide) {
+      p.style.transformOrigin = `${region.centroide[0]}px ${region.centroide[1]}px`;
+      centroides.set(region.id, region.centroide);
+    }
     capaRegiones.appendChild(p);
     elementosCCAA.set(region.id, p);
   }
@@ -181,31 +188,111 @@ import Layout from '../layouts/Layout.astro';
     svg.classList.toggle('mapa-atenuado', !!estado.regionSeleccionada);
   }
 
-  // tooltip
-  const tooltip = $('#tooltip');
+  // ——— hover enriquecido: región más grande, tarjeta de datos al instante,
+  // productos con un pequeño retraso (solo si el ratón se queda quieto) ———
+  const mapWrap = $('.map-wrap');
+  const productosFlotantes = $('#productosFlotantes');
+  const infoRegion = $('#infoRegion');
+  const RETRASO_PRODUCTOS = 900; // ms sin mover el ratón antes de abrir la tarjeta
+  let regionHover = null;
+  let temporizadorProductos = null;
+
+  function posicionEnMapa(cx, cy) {
+    const punto = svg.createSVGPoint();
+    punto.x = cx;
+    punto.y = cy;
+    const p = punto.matrixTransform(svg.getScreenCTM());
+    const caja = mapWrap.getBoundingClientRect();
+    return { x: p.x - caja.left, y: p.y - caja.top };
+  }
+
+  function activarRegionHover(id) {
+    const el = elementosCCAA.get(id);
+    if (!el) return;
+    el.classList.add('en-hover');
+    capaRegiones.appendChild(el); // trae la región al frente sobre sus vecinas
+
+    const nombre = NOMBRES_CCAA[id] || id;
+    const datos = DATOS_CCAA[id];
+    if (datos) {
+      infoRegion.innerHTML = `
+        <h3>${escapar(nombre)}</h3>
+        <dl>
+          <div><dt>Extensión</dt><dd>${datos.extension.toLocaleString('es-ES')} km²</dd></div>
+          <div><dt>Altitud</dt><dd>${datos.altitud} m</dd></div>
+          <div><dt>Clima</dt><dd>${escapar(datos.clima)}</dd></div>
+          <div><dt>Temp. máx.</dt><dd>${datos.tempMax} °C</dd></div>
+          <div><dt>Temp. mín.</dt><dd>${datos.tempMin} °C</dd></div>
+        </dl>`;
+      infoRegion.classList.add('visible');
+    }
+  }
+
+  function mostrarProductosFlotantes(id) {
+    const centro = centroides.get(id);
+    if (!centro) return;
+    const nombre = NOMBRES_CCAA[id] || id;
+    const productos = productosDeRegion(id);
+
+    const porCategoria = new Map();
+    for (const p of productos) {
+      porCategoria.set(p.c, (porCategoria.get(p.c) || 0) + 1);
+    }
+    const grupos = [...porCategoria.entries()].sort((a, b) => b[1] - a[1]);
+
+    const pos = posicionEnMapa(centro[0], centro[1]);
+    productosFlotantes.style.left = `${pos.x}px`;
+    productosFlotantes.style.top = `${pos.y}px`;
+    productosFlotantes.innerHTML = `
+      <span class="pf-nombre">${escapar(nombre)}</span>
+      ${
+        grupos.length
+          ? `<ul>${grupos
+              .map(
+                ([cat, n]) =>
+                  `<li><span>${CATEGORIAS[cat].icono} ${escapar(CATEGORIAS[cat].nombre)}</span><span class="pf-cont">${n}</span></li>`
+              )
+              .join('')}</ul>`
+          : '<p class="pf-vacio">Sin registros en la muestra actual</p>'
+      }`;
+    productosFlotantes.classList.add('visible');
+  }
+
+  function ocultarHover() {
+    if (temporizadorProductos) {
+      clearTimeout(temporizadorProductos);
+      temporizadorProductos = null;
+    }
+    if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
+    regionHover = null;
+    productosFlotantes.classList.remove('visible');
+    infoRegion.classList.remove('visible');
+  }
 
   svg.addEventListener('pointermove', (e) => {
     const el = e.target.closest('.ccaa');
-    if (!el) return ocultarTooltip();
-    const id = el.dataset.id;
-    const n = productosDeRegion(id).length;
-    const nombre = NOMBRES_CCAA[id] || id;
-    tooltip.innerHTML = `<span class="t-nombre">${escapar(nombre)}</span><span class="t-detalle">${
-      n ? `${n} producto${n === 1 ? '' : 's'} con sello de calidad` : 'Sin registros en la muestra actual'
-    }</span>`;
-    const caja = svg.getBoundingClientRect();
-    const x = e.clientX - caja.left;
-    const y = e.clientY - caja.top;
-    tooltip.style.left = `${Math.min(x + 14, caja.width - 220)}px`;
-    tooltip.style.top = `${y + 16}px`;
-    tooltip.classList.add('visible');
+    const id = el ? el.dataset.id : null;
+
+    if (id !== regionHover) {
+      if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
+      productosFlotantes.classList.remove('visible');
+      regionHover = id;
+      if (id) activarRegionHover(id);
+      else infoRegion.classList.remove('visible');
+    }
+
+    // cualquier movimiento (entrar en la región o desplazarse dentro de ella)
+    // reinicia la cuenta atrás: la tarjeta de productos solo se abre si el
+    // ratón se queda quieto sobre la misma región.
+    if (temporizadorProductos) clearTimeout(temporizadorProductos);
+    if (id) {
+      temporizadorProductos = setTimeout(() => {
+        if (regionHover === id) mostrarProductosFlotantes(id);
+      }, RETRASO_PRODUCTOS);
+    }
   });
 
-  svg.addEventListener('pointerleave', ocultarTooltip);
-
-  function ocultarTooltip() {
-    tooltip.classList.remove('visible');
-  }
+  svg.addEventListener('pointerleave', ocultarHover);
 
   function activarRegion(id) {
     estado.regionSeleccionada = estado.regionSeleccionada === id ? null : id;
