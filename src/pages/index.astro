@@ -270,6 +270,11 @@ import Layout from '../layouts/Layout.astro';
   }
 
   svg.addEventListener('pointermove', (e) => {
+    // el hover (agrandar región, tarjetas flotantes) solo tiene sentido con
+    // ratón/trackpad: con el dedo no hay forma de "salir" de la región sin
+    // tocar otro sitio, así que se quedaría visualmente pegada tras tocar.
+    if (e.pointerType === 'touch') return;
+
     const el = e.target.closest('.ccaa');
     const id = el ? el.dataset.id : null;
 
