@@ -423,7 +423,20 @@ bastar. Se refuerzan también `.map-card` (la tarjeta completa) y `.ccaa`
 (`user-select`/`-webkit-touch-callout`/`-webkit-tap-highlight-color`), para
 no dejar ningún nivel del árbol sin cubrir.
 
-**Pendiente**: si tras esto sigue ocurriendo, hace falta un diagnóstico más
-preciso (modelo de móvil, navegador, y a ser posible una captura o vídeo del
-problema) — sin verlo en un dispositivo real es difícil seguir acertando a
-ciegas con más propiedades CSS.
+**Cuarta vuelta (diagnóstico correcto gracias a una captura en iPhone)**:
+la captura mostró el menú nativo de iOS "Copiar / Buscar / Consultar" — el
+menú de **selección de texto**, no el de "guardar imagen". El gesto de
+arrastre probablemente empezaba sobre el texto de un chip de filtro y se
+extendía hacia el mapa; iOS pinta de azul todo el rectángulo de la
+selección, aunque "por debajo" pase por encima de la zona del mapa. Las
+correcciones anteriores (limitadas a `.map-card`/`.ccaa`) no cubrían este
+caso porque el origen de la selección no era el mapa en sí.
+
+**Solución definitiva**: desactivar la selección de texto en toda la
+página (`body { user-select: none; -webkit-touch-callout: none; }`), con
+excepción explícita para `input`/`textarea` (el buscador sigue
+seleccionando/escribiendo con normalidad). Es un patrón habitual en sitios
+interactivos tipo aplicación (mapa, chips, botones) frente a páginas de
+lectura de texto largo. Verificado simulando exactamente el gesto del
+fallo (arrastre desde un chip de filtro hasta el mapa): ya no se selecciona
+nada, y el buscador sigue funcionando.

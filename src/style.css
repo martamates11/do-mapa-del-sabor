@@ -39,6 +39,21 @@ body {
   font-family: var(--sans);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  /* Es un sitio interactivo (mapa, chips, botones), no un documento de
+     lectura: desactivar la selección de texto evita que un gesto de
+     arrastre con el dedo (p. ej. empezando en un filtro) se interprete
+     como selección de contenido y tiña de azul lo que haya "debajo",
+     incluido el mapa. Los campos de escritura (el buscador) siguen
+     permitiendo seleccionar su propio texto con normalidad. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 /* ————— cabecera ————— */
