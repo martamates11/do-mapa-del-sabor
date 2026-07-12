@@ -308,11 +308,11 @@ import Layout from '../layouts/Layout.astro';
 
   svg.addEventListener('pointerleave', ocultarHover);
 
-  function activarRegion(id) {
+  function activarRegion(id, { desplazar = true } = {}) {
     estado.regionSeleccionada = estado.regionSeleccionada === id ? null : id;
     pintarMapa();
     pintarPanel();
-    if (window.matchMedia('(max-width: 940px)').matches && estado.regionSeleccionada) {
+    if (desplazar && window.matchMedia('(max-width: 940px)').matches && estado.regionSeleccionada) {
       $('#panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
@@ -336,7 +336,13 @@ import Layout from '../layouts/Layout.astro';
   // pueda ofrecerse a seleccionar o analizar (causa del recuadro azul que
   // ni la CSS ni el bloqueo de `contextmenu` consiguieron evitar) ———
   const toqueMapa = $('#toqueMapa');
-  const esTactil = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  // El iPad (y algún Android en modo "escritorio") puede reportar
+  // pointer:fine/hover:hover aunque no haya ratón — por eso no basta con
+  // matchMedia solo; se comprueba también la capacidad táctil real.
+  const esTactil =
+    window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0;
 
   if (esTactil) {
     toqueMapa.classList.add('activa');
@@ -359,7 +365,17 @@ import Layout from '../layouts/Layout.astro';
       const el = document.elementFromPoint(t.clientX, t.clientY);
       toqueMapa.style.pointerEvents = '';
       const region = el ? el.closest('.ccaa') : null;
-      if (region) activarRegion(region.dataset.id);
+      if (!region) return;
+
+      const id = region.dataset.id;
+      // Un toque es una acción deliberada (no hay "de paso" como con el
+      // ratón): se abren las dos tarjetas al instante, sin el retraso que
+      // sí tiene sentido para el hover de escritorio.
+      activarRegionHover(id);
+      mostrarProductosFlotantes(id);
+      // sin desplazar la pantalla: si no, el salto automático al panel
+      // taparía las tarjetas que se acaban de abrir.
+      activarRegion(id, { desplazar: false });
     });
   }
 
