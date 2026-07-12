@@ -275,6 +275,21 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   }
 }
 
+/* Capa invisible sobre el SVG, activada solo en pantallas táctiles (ver
+   script): al no tener contenido de texto ni imagen, iOS no tiene nada que
+   ofrecerse a seleccionar o analizar bajo el dedo. Gestiona el toque por
+   JavaScript en vez de dejar que el gesto llegue directamente al SVG. */
+.toque-mapa {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  touch-action: pan-y pinch-zoom;
+  background: transparent;
+}
+
+.toque-mapa.activa { pointer-events: auto; }
+
 .ccaa.en-hover {
   transform: scale(1.08);
   fill: var(--oro) !important;
@@ -526,9 +541,12 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   .panel { max-height: none; min-height: 0; }
   .brand-claim { display: none; }
 
-  /* El mapa es lo primordial: en móvil se muestra el primero, sin tener
-     que bajar por el texto de cabecera ni los filtros para llegar a él. */
+  /* El mapa es lo primordial: en móvil, el título y la introducción
+     quedan encima (dan contexto sin apenas ocupar espacio), pero los
+     filtros — mucho más altos, dos filas de chips + buscador — pasan
+     a estar debajo del mapa, para no alejarlo. */
   main { display: flex; flex-direction: column; }
-  .explorer { order: -1; margin-top: 0.8rem; }
-  .hero { padding-top: 1.2rem; }
+  .hero { order: 0; padding-top: 1.2rem; }
+  .explorer { order: 1; margin-top: 0.8rem; }
+  .filters { order: 2; position: static; }
 }
