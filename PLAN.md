@@ -413,3 +413,17 @@ objeto completo. Corregido en `#mapa` y `.map-wrap` con `user-select: none`,
 contextual de iOS) y `-webkit-user-drag: none`; además `touch-action: pan-y
 pinch-zoom` en el SVG, para permitir seguir haciendo scroll vertical y
 zoom con dos dedos sin que el navegador interprete el gesto como selección.
+
+**Tercera vuelta (seguía sin resolverse)**: Safari/Chrome móvil tienen un
+fallo conocido por el que el resalte de toque de un SVG interactivo se
+renderiza sobre el contenedor HTML que lo envuelve, no sobre el propio SVG
+— así que las propiedades puestas solo en `#mapa`/`.map-wrap` pueden no
+bastar. Se refuerzan también `.map-card` (la tarjeta completa) y `.ccaa`
+(cada región individual) con las mismas propiedades
+(`user-select`/`-webkit-touch-callout`/`-webkit-tap-highlight-color`), para
+no dejar ningún nivel del árbol sin cubrir.
+
+**Pendiente**: si tras esto sigue ocurriendo, hace falta un diagnóstico más
+preciso (modelo de móvil, navegador, y a ser posible una captura o vídeo del
+problema) — sin verlo en un dispositivo real es difícil seguir acertando a
+ciegas con más propiedades CSS.
