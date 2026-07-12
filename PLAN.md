@@ -364,19 +364,20 @@ interactividad enriquecida en el hover.
   trae al frente del resto (`appendChild` la reordena en el SVG) para que no
   quede tapada por sus vecinas. Esto y la tarjeta de datos (siguiente punto)
   aparecen **al instante**.
-- **Productos de la región, con un pequeño retraso**: la tarjeta con hasta 6
-  productos (y un "+N más" si hay más), anclada al centroide de la región,
-  solo se abre si el ratón se queda quieto sobre la misma región durante
-  900ms — cualquier movimiento (incluso dentro de la propia región) reinicia
-  la cuenta atrás. Evita que la tarjeta parpadee al simplemente cruzar el
-  mapa. Ver `activarRegionHover()` / `mostrarProductosFlotantes()` en
-  `src/pages/index.astro`.
-- **Tarjeta de datos arriba a la derecha**: nombre de la comunidad, extensión
-  (km²), altitud de la capital, clima y temperaturas máx./mín. orientativas.
-  Fuente: `src/data/datos-ccaa.js` — **valores aproximados de cultura
-  general geográfica, no cifras oficiales verificadas al detalle**; si se
-  necesita precisión (por ejemplo, para publicarlo como dato "oficial"),
-  contrastar con AEMET/INE antes de darlo por bueno.
+- **Categorías de la región, con un pequeño retraso**: la tarjeta anclada al
+  centroide de la región, en vez de listar cada producto, agrupa por
+  categoría (quesos, vinos, aceites…) con el nº de productos de cada una,
+  ordenadas de mayor a menor — solo se abre si el ratón se queda quieto
+  sobre la misma región durante 900ms; cualquier movimiento (incluso dentro
+  de la propia región) reinicia la cuenta atrás. Evita que la tarjeta
+  parpadee al simplemente cruzar el mapa. Ver `activarRegionHover()` /
+  `mostrarProductosFlotantes()` en `src/pages/index.astro`.
+- **Tarjeta de datos arriba a la izquierda**: nombre de la comunidad,
+  extensión (km²), altitud de la capital, clima y temperaturas máx./mín.
+  orientativas. Fuente: `src/data/datos-ccaa.js` — **valores aproximados de
+  cultura general geográfica, no cifras oficiales verificadas al detalle**;
+  si se necesita precisión (por ejemplo, para publicarlo como dato
+  "oficial"), contrastar con AEMET/INE antes de darlo por bueno.
 - Sustituye por completo el tooltip pequeño anterior (nombre + nº de
   productos siguiendo al ratón), que quedaba redundante con esta información
   más rica.

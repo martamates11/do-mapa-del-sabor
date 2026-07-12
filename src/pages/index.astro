@@ -193,7 +193,6 @@ import Layout from '../layouts/Layout.astro';
   const mapWrap = $('.map-wrap');
   const productosFlotantes = $('#productosFlotantes');
   const infoRegion = $('#infoRegion');
-  const MAX_PRODUCTOS_FLOTANTES = 6;
   const RETRASO_PRODUCTOS = 900; // ms sin mover el ratón antes de abrir la tarjeta
   let regionHover = null;
   let temporizadorProductos = null;
@@ -235,21 +234,25 @@ import Layout from '../layouts/Layout.astro';
     const nombre = NOMBRES_CCAA[id] || id;
     const productos = productosDeRegion(id);
 
+    const porCategoria = new Map();
+    for (const p of productos) {
+      porCategoria.set(p.c, (porCategoria.get(p.c) || 0) + 1);
+    }
+    const grupos = [...porCategoria.entries()].sort((a, b) => b[1] - a[1]);
+
     const pos = posicionEnMapa(centro[0], centro[1]);
     productosFlotantes.style.left = `${pos.x}px`;
     productosFlotantes.style.top = `${pos.y}px`;
     productosFlotantes.innerHTML = `
       <span class="pf-nombre">${escapar(nombre)}</span>
       ${
-        productos.length
-          ? `<ul>${productos
-              .slice(0, MAX_PRODUCTOS_FLOTANTES)
-              .map((p) => `<li>${escapar(p.n)}</li>`)
-              .join('')}</ul>${
-              productos.length > MAX_PRODUCTOS_FLOTANTES
-                ? `<span class="pf-mas">+${productos.length - MAX_PRODUCTOS_FLOTANTES} más</span>`
-                : ''
-            }`
+        grupos.length
+          ? `<ul>${grupos
+              .map(
+                ([cat, n]) =>
+                  `<li><span>${CATEGORIAS[cat].icono} ${escapar(CATEGORIAS[cat].nombre)}</span><span class="pf-cont">${n}</span></li>`
+              )
+              .join('')}</ul>`
           : '<p class="pf-vacio">Sin registros en la muestra actual</p>'
       }`;
     productosFlotantes.classList.add('visible');
