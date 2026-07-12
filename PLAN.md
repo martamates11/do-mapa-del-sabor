@@ -440,3 +440,31 @@ interactivos tipo aplicación (mapa, chips, botones) frente a páginas de
 lectura de texto largo. Verificado simulando exactamente el gesto del
 fallo (arrastre desde un chip de filtro hasta el mapa): ya no se selecciona
 nada, y el buscador sigue funcionando.
+
+**Quinta vuelta (seguía igual, con segunda captura idéntica)**: investigado
+el problema — es un **fallo conocido y confirmado de WebKit** (reportado en
+los foros oficiales de Apple Developer, iOS 15 en adelante e incluso
+versiones muy recientes): `-webkit-touch-callout: none` deja de respetarse
+de forma fiable en iOS reciente, aparentemente por interferencia de **Live
+Text** (la función de iOS que analiza el contenido visual al mantener
+pulsado), que tiene su propia gestión del gesto y puede saltarse esa CSS.
+Fuente: [Apple Developer Forums — "webkit-touch-callout: none; not working
+in Safari"](https://developer.apple.com/forums/thread/808606).
+
+Según la misma investigación, aunque la CSS falle, **el gesto de mantener
+pulsado sigue disparando el evento `contextmenu` en JavaScript**, así que se
+añade una última red de seguridad que no depende de que el navegador
+respete la propiedad CSS:
+```js
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+```
+Verificado que cancela el evento correctamente y que el clic para
+seleccionar región sigue funcionando sin cambios.
+
+**Si esto tampoco lo resuelve del todo**: sería indicio de que es
+literalmente la función de sistema de iOS (Live Text / "Visual Look Up"),
+que puede operar por debajo del navegador sobre cualquier contenido en
+pantalla — en ese caso no habría forma de desactivarlo desde el código de
+la web, y la comprobación sería: Ajustes de iPhone → General → Idioma y
+región → desactivar "Texto en vivo" (o similar, el nombre exacto varía por
+versión de iOS), para confirmar el diagnóstico.

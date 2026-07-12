@@ -138,6 +138,13 @@ import Layout from '../layouts/Layout.astro';
     pintarPanel();
   });
 
+  // En iOS reciente, `-webkit-touch-callout: none` deja de bastar para
+  // evitar el menú de mantener pulsado / Live Text (fallo conocido de
+  // WebKit) — pero el propio mantener pulsado sigue disparando el evento
+  // `contextmenu`, así que lo interceptamos directamente en JS como
+  // último recurso, sin depender de que el navegador respete la CSS.
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
   // ——— mapa ———
 
   const svg = $('#mapa');
