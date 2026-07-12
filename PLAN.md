@@ -413,3 +413,30 @@ objeto completo. Corregido en `#mapa` y `.map-wrap` con `user-select: none`,
 contextual de iOS) y `-webkit-user-drag: none`; además `touch-action: pan-y
 pinch-zoom` en el SVG, para permitir seguir haciendo scroll vertical y
 zoom con dos dedos sin que el navegador interprete el gesto como selección.
+
+**Tercera vuelta (seguía sin resolverse)**: Safari/Chrome móvil tienen un
+fallo conocido por el que el resalte de toque de un SVG interactivo se
+renderiza sobre el contenedor HTML que lo envuelve, no sobre el propio SVG
+— así que las propiedades puestas solo en `#mapa`/`.map-wrap` pueden no
+bastar. Se refuerzan también `.map-card` (la tarjeta completa) y `.ccaa`
+(cada región individual) con las mismas propiedades
+(`user-select`/`-webkit-touch-callout`/`-webkit-tap-highlight-color`), para
+no dejar ningún nivel del árbol sin cubrir.
+
+**Cuarta vuelta (diagnóstico correcto gracias a una captura en iPhone)**:
+la captura mostró el menú nativo de iOS "Copiar / Buscar / Consultar" — el
+menú de **selección de texto**, no el de "guardar imagen". El gesto de
+arrastre probablemente empezaba sobre el texto de un chip de filtro y se
+extendía hacia el mapa; iOS pinta de azul todo el rectángulo de la
+selección, aunque "por debajo" pase por encima de la zona del mapa. Las
+correcciones anteriores (limitadas a `.map-card`/`.ccaa`) no cubrían este
+caso porque el origen de la selección no era el mapa en sí.
+
+**Solución definitiva**: desactivar la selección de texto en toda la
+página (`body { user-select: none; -webkit-touch-callout: none; }`), con
+excepción explícita para `input`/`textarea` (el buscador sigue
+seleccionando/escribiendo con normalidad). Es un patrón habitual en sitios
+interactivos tipo aplicación (mapa, chips, botones) frente a páginas de
+lectura de texto largo. Verificado simulando exactamente el gesto del
+fallo (arrastre desde un chip de filtro hasta el mapa): ya no se selecciona
+nada, y el buscador sigue funcionando.
