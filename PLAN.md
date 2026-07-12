@@ -468,3 +468,34 @@ pantalla — en ese caso no habría forma de desactivarlo desde el código de
 la web, y la comprobación sería: Ajustes de iPhone → General → Idioma y
 región → desactivar "Texto en vivo" (o similar, el nombre exacto varía por
 versión de iOS), para confirmar el diagnóstico.
+
+**Sexta vuelta**: la profesora desactivó "Texto en vivo" en Ajustes y el
+problema persistió igual — **descarta a Live Text como causa**, ya que si
+fuera una función de sistema, desactivarla habría cambiado algo. Importante
+matiz: en el momento de esa prueba, el arreglo del `contextmenu` (quinta
+vuelta) **todavía no estaba desplegado**, así que de hecho no se había
+probado en un dispositivo real todavía. Queda pendiente confirmar si,
+ahora que sí está desplegado, resuelve el problema — si tampoco basta,
+significa que ni la CSS ni la intercepción de `contextmenu` cubren el
+mecanismo real que lo dispara en el dispositivo de la profesora, y haría
+falta seguir investigando con más detalle (idealmente con acceso remoto de
+depuración al dispositivo, no solo capturas de pantalla).
+
+## 12. El mapa como prioridad absoluta en móvil (implementado)
+
+Dado que el uso previsto de la aplicación es mayoritariamente desde el
+móvil, se reordena la página para que el mapa sea lo primero que se ve, sin
+necesidad de bajar por el texto de cabecera ni los filtros.
+
+**Cómo**: en el media query móvil (`max-width: 940px`) ya existente en
+`style.css`, `main` pasa a `display:flex; flex-direction:column`, y
+`.explorer` (mapa + panel) recibe `order:-1` para pintarse el primero,
+aunque en el HTML siga estando después del `hero` y los `filters` (el
+orden en el documento no cambia, solo el visual — no afecta a la lectura
+por lectores de pantalla ni al SEO). El resto de secciones (cabecera con
+estadísticas, chips de categoría, buscador) quedan debajo del mapa en
+móvil.
+
+Verificado con Playwright (viewport de móvil): el mapa queda dentro del
+área visible nada más cargar la página, sin hacer scroll, y el clic para
+seleccionar región sigue funcionando exactamente igual.
