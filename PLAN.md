@@ -400,3 +400,16 @@ Verificado con Playwright emulando un dispositivo táctil: con
 `pointerType: touch` la región no se agranda ni cambia de color; con
 `pointerType: mouse` sigue haciéndolo igual que antes; el toque para
 seleccionar región sigue abriendo el panel correctamente.
+
+**Segunda vuelta (el problema seguía ocurriendo)**: lo anterior no era la
+causa real de "se selecciona en azul todo el mapa" en móvil — eso es la
+**selección nativa de contenido/imagen** del navegador (el mismo mecanismo
+por el que se selecciona texto arrastrando el dedo, o el recuadro azul de
+"guardar imagen" al mantener pulsado), que ni el hover ni el
+`tap-highlight-color` controlan. El SVG del mapa no tenía `user-select`
+desactivado, así que arrastrar el dedo sobre él lo seleccionaba como
+objeto completo. Corregido en `#mapa` y `.map-wrap` con `user-select: none`,
+`-webkit-touch-callout: none` (evita el recuadro de selección/menú
+contextual de iOS) y `-webkit-user-drag: none`; además `touch-action: pan-y
+pinch-zoom` en el SVG, para permitir seguir haciendo scroll vertical y
+zoom con dos dedos sin que el navegador interprete el gesto como selección.
