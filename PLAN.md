@@ -474,27 +474,43 @@ problema persistió igual — **descarta a Live Text como causa**, ya que si
 fuera una función de sistema, desactivarla habría cambiado algo. Importante
 matiz: en el momento de esa prueba, el arreglo del `contextmenu` (quinta
 vuelta) **todavía no estaba desplegado**, así que de hecho no se había
-probado en un dispositivo real todavía. Queda pendiente confirmar si,
-ahora que sí está desplegado, resuelve el problema — si tampoco basta,
-significa que ni la CSS ni la intercepción de `contextmenu` cubren el
-mecanismo real que lo dispara en el dispositivo de la profesora, y haría
-falta seguir investigando con más detalle (idealmente con acceso remoto de
-depuración al dispositivo, no solo capturas de pantalla).
+probado en un dispositivo real todavía.
+
+**Séptima vuelta (el `contextmenu` desplegado tampoco bastó)**: confirmado
+que ni la CSS ni la intercepción de `contextmenu` cubren el mecanismo real
+que lo dispara en el dispositivo de la profesora. Cambio de enfoque: en vez
+de seguir intentando evitar la selección con más CSS/eventos, se quita el
+SVG como objetivo táctil directo. Se añade `#toqueMapa`, una capa
+transparente superpuesta al mapa, **activada solo en dispositivos táctiles**
+(`matchMedia('(hover: none) and (pointer: coarse)')`) — en escritorio
+permanece con `pointer-events: none` y no afecta a nada. En el toque, el
+dedo nunca posa sobre contenido de texto/imagen del SVG (un `<div>` vacío
+no le ofrece nada a iOS para seleccionar o analizar); la propia capa hace
+de "gestor de toques": mide el desplazamiento entre `touchstart` y
+`touchend` para distinguir un toque de un arrastre/scroll, y si es un
+toque, localiza la región con `document.elementFromPoint()` (desactivando
+momentáneamente sus propios `pointer-events` para poder "ver" el SVG
+debajo) y llama a `activarRegion()` directamente — sin pasar nunca por el
+`click` nativo del SVG. También se añade `selectstart` a la lista de
+eventos interceptados, como red adicional.
+
+Verificado con Playwright: en un contexto táctil la capa se activa y el
+toque selecciona la región correctamente sin seleccionar texto; en
+escritorio la capa permanece inactiva y el hover/clic de ratón siguen
+funcionando exactamente igual que antes.
 
 ## 12. El mapa como prioridad absoluta en móvil (implementado)
 
 Dado que el uso previsto de la aplicación es mayoritariamente desde el
-móvil, se reordena la página para que el mapa sea lo primero que se ve, sin
-necesidad de bajar por el texto de cabecera ni los filtros.
+móvil, se reordena la página en el media query móvil (`max-width: 940px`)
+para acercar el mapa lo máximo posible sin perder el contexto inicial.
 
-**Cómo**: en el media query móvil (`max-width: 940px`) ya existente en
-`style.css`, `main` pasa a `display:flex; flex-direction:column`, y
-`.explorer` (mapa + panel) recibe `order:-1` para pintarse el primero,
-aunque en el HTML siga estando después del `hero` y los `filters` (el
-orden en el documento no cambia, solo el visual — no afecta a la lectura
-por lectores de pantalla ni al SEO). El resto de secciones (cabecera con
-estadísticas, chips de categoría, buscador) quedan debajo del mapa en
-móvil.
+**Cómo**: `main` pasa a `display:flex; flex-direction:column`, con orden
+explícito: `.hero` (título + introducción + estadísticas) primero — da
+contexto sin apenas ocupar espacio —, `.explorer` (mapa + panel) segundo, y
+`.filters` (chips de categoría + buscador, la sección más alta de las
+tres) el último, debajo del mapa. El orden en el HTML no cambia, solo el
+visual (no afecta a lectores de pantalla ni a SEO).
 
 Verificado con Playwright (viewport de móvil): el mapa queda dentro del
 área visible nada más cargar la página, sin hacer scroll, y el clic para

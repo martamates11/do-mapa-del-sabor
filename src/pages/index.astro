@@ -27,6 +27,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="map-card">
       <div class="map-wrap">
         <svg id="mapa" role="group" aria-label="Mapa de España por comunidades autónomas"></svg>
+        <div class="toque-mapa" id="toqueMapa" aria-hidden="true"></div>
         <div class="productos-flotantes" id="productosFlotantes" role="status" aria-hidden="true"></div>
         <div class="info-region" id="infoRegion" role="status" aria-hidden="true"></div>
       </div>
@@ -144,6 +145,7 @@ import Layout from '../layouts/Layout.astro';
   // `contextmenu`, así que lo interceptamos directamente en JS como
   // último recurso, sin depender de que el navegador respete la CSS.
   document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('selectstart', (e) => e.preventDefault());
 
   // ——— mapa ———
 
@@ -328,6 +330,38 @@ import Layout from '../layouts/Layout.astro';
       activarRegion(el.dataset.id);
     }
   });
+
+  // ——— capa táctil: en pantallas táctiles, el toque no llega directamente
+  // al SVG. Así el dedo nunca posa sobre contenido de texto/imagen que iOS
+  // pueda ofrecerse a seleccionar o analizar (causa del recuadro azul que
+  // ni la CSS ni el bloqueo de `contextmenu` consiguieron evitar) ———
+  const toqueMapa = $('#toqueMapa');
+  const esTactil = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+  if (esTactil) {
+    toqueMapa.classList.add('activa');
+    let inicioToque = null;
+
+    toqueMapa.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      inicioToque = { x: t.clientX, y: t.clientY };
+    }, { passive: true });
+
+    toqueMapa.addEventListener('touchend', (e) => {
+      if (!inicioToque) return;
+      const t = e.changedTouches[0];
+      const dx = Math.abs(t.clientX - inicioToque.x);
+      const dy = Math.abs(t.clientY - inicioToque.y);
+      inicioToque = null;
+      if (dx > 10 || dy > 10) return; // fue un arrastre/scroll, no un toque
+
+      toqueMapa.style.pointerEvents = 'none';
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      toqueMapa.style.pointerEvents = '';
+      const region = el ? el.closest('.ccaa') : null;
+      if (region) activarRegion(region.dataset.id);
+    });
+  }
 
   // ——— panel lateral ———
 
