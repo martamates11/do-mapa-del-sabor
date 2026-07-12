@@ -218,7 +218,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   cursor: pointer;
   stroke: var(--bg-sunken);
   stroke-width: 1.1;
-  transition: filter 0.18s, opacity 0.18s, transform 0.2s ease-out;
+  transition: filter 0.18s, opacity 0.18s, transform 0.2s ease-out, fill 0.15s;
   outline: none;
 }
 
@@ -228,6 +228,8 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 
 .ccaa.en-hover {
   transform: scale(1.08);
+  fill: var(--oro) !important;
+  filter: brightness(1.1) drop-shadow(0 0 16px rgba(234, 176, 74, 0.7));
 }
 
 .ccaa.seleccionada {

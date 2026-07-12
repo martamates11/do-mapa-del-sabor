@@ -357,14 +357,20 @@ interactividad enriquecida en el hover.
 - **Mapa más grande**: la proporción de la rejilla `explorer` pasa de
   `1.5fr/1fr` a `2.3fr/0.9fr` (mapa/panel), agrandando el mapa de forma
   proporcional al ser todo el layout responsivo (`viewBox` + `width:100%`).
-- **Región ampliada al pasar el ratón**: cada región escala ligeramente
-  (`transform: scale(1.08)`) usando como `transform-origin` su propio
-  centroide, ya calculado por `tools/build-map.mjs` en `mapa-ccaa.js`. La
-  región hover se trae al frente del resto (`appendChild` la reordena en el
-  SVG) para que no quede tapada por sus vecinas.
-- **Productos de la región flotando sobre ella**: al pasar el ratón aparece
-  una tarjeta anclada al centroide de la región con hasta 6 productos (y un
-  "+N más" si hay más) — ver `mostrarHover()` en `src/pages/index.astro`.
+- **Región ampliada y en color llamativo al pasar el ratón**: cada región
+  escala ligeramente (`transform: scale(1.08)`) y cambia a color dorado con
+  resplandor, usando como `transform-origin` su propio centroide, ya
+  calculado por `tools/build-map.mjs` en `mapa-ccaa.js`. La región hover se
+  trae al frente del resto (`appendChild` la reordena en el SVG) para que no
+  quede tapada por sus vecinas. Esto y la tarjeta de datos (siguiente punto)
+  aparecen **al instante**.
+- **Productos de la región, con un pequeño retraso**: la tarjeta con hasta 6
+  productos (y un "+N más" si hay más), anclada al centroide de la región,
+  solo se abre si el ratón se queda quieto sobre la misma región durante
+  900ms — cualquier movimiento (incluso dentro de la propia región) reinicia
+  la cuenta atrás. Evita que la tarjeta parpadee al simplemente cruzar el
+  mapa. Ver `activarRegionHover()` / `mostrarProductosFlotantes()` en
+  `src/pages/index.astro`.
 - **Tarjeta de datos arriba a la derecha**: nombre de la comunidad, extensión
   (km²), altitud de la capital, clima y temperaturas máx./mín. orientativas.
   Fuente: `src/data/datos-ccaa.js` — **valores aproximados de cultura

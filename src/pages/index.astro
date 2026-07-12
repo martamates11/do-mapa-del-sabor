@@ -188,12 +188,15 @@ import Layout from '../layouts/Layout.astro';
     svg.classList.toggle('mapa-atenuado', !!estado.regionSeleccionada);
   }
 
-  // ——— hover enriquecido: región más grande, sus productos y una tarjeta con datos ———
+  // ——— hover enriquecido: región más grande, tarjeta de datos al instante,
+  // productos con un pequeño retraso (solo si el ratón se queda quieto) ———
   const mapWrap = $('.map-wrap');
   const productosFlotantes = $('#productosFlotantes');
   const infoRegion = $('#infoRegion');
   const MAX_PRODUCTOS_FLOTANTES = 6;
+  const RETRASO_PRODUCTOS = 900; // ms sin mover el ratón antes de abrir la tarjeta
   let regionHover = null;
+  let temporizadorProductos = null;
 
   function posicionEnMapa(cx, cy) {
     const punto = svg.createSVGPoint();
@@ -204,14 +207,31 @@ import Layout from '../layouts/Layout.astro';
     return { x: p.x - caja.left, y: p.y - caja.top };
   }
 
-  function mostrarHover(id) {
+  function activarRegionHover(id) {
     const el = elementosCCAA.get(id);
-    const centro = centroides.get(id);
-    if (!el || !centro) return;
-
+    if (!el) return;
     el.classList.add('en-hover');
     capaRegiones.appendChild(el); // trae la región al frente sobre sus vecinas
 
+    const nombre = NOMBRES_CCAA[id] || id;
+    const datos = DATOS_CCAA[id];
+    if (datos) {
+      infoRegion.innerHTML = `
+        <h3>${escapar(nombre)}</h3>
+        <dl>
+          <div><dt>Extensión</dt><dd>${datos.extension.toLocaleString('es-ES')} km²</dd></div>
+          <div><dt>Altitud</dt><dd>${datos.altitud} m</dd></div>
+          <div><dt>Clima</dt><dd>${escapar(datos.clima)}</dd></div>
+          <div><dt>Temp. máx.</dt><dd>${datos.tempMax} °C</dd></div>
+          <div><dt>Temp. mín.</dt><dd>${datos.tempMin} °C</dd></div>
+        </dl>`;
+      infoRegion.classList.add('visible');
+    }
+  }
+
+  function mostrarProductosFlotantes(id) {
+    const centro = centroides.get(id);
+    if (!centro) return;
     const nombre = NOMBRES_CCAA[id] || id;
     const productos = productosDeRegion(id);
 
@@ -233,23 +253,13 @@ import Layout from '../layouts/Layout.astro';
           : '<p class="pf-vacio">Sin registros en la muestra actual</p>'
       }`;
     productosFlotantes.classList.add('visible');
-
-    const datos = DATOS_CCAA[id];
-    if (datos) {
-      infoRegion.innerHTML = `
-        <h3>${escapar(nombre)}</h3>
-        <dl>
-          <div><dt>Extensión</dt><dd>${datos.extension.toLocaleString('es-ES')} km²</dd></div>
-          <div><dt>Altitud</dt><dd>${datos.altitud} m</dd></div>
-          <div><dt>Clima</dt><dd>${escapar(datos.clima)}</dd></div>
-          <div><dt>Temp. máx.</dt><dd>${datos.tempMax} °C</dd></div>
-          <div><dt>Temp. mín.</dt><dd>${datos.tempMin} °C</dd></div>
-        </dl>`;
-      infoRegion.classList.add('visible');
-    }
   }
 
   function ocultarHover() {
+    if (temporizadorProductos) {
+      clearTimeout(temporizadorProductos);
+      temporizadorProductos = null;
+    }
     if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
     regionHover = null;
     productosFlotantes.classList.remove('visible');
@@ -259,13 +269,23 @@ import Layout from '../layouts/Layout.astro';
   svg.addEventListener('pointermove', (e) => {
     const el = e.target.closest('.ccaa');
     const id = el ? el.dataset.id : null;
-    if (id === regionHover) return;
-    if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
-    regionHover = id;
-    if (id) mostrarHover(id);
-    else {
+
+    if (id !== regionHover) {
+      if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
       productosFlotantes.classList.remove('visible');
-      infoRegion.classList.remove('visible');
+      regionHover = id;
+      if (id) activarRegionHover(id);
+      else infoRegion.classList.remove('visible');
+    }
+
+    // cualquier movimiento (entrar en la región o desplazarse dentro de ella)
+    // reinicia la cuenta atrás: la tarjeta de productos solo se abre si el
+    // ratón se queda quieto sobre la misma región.
+    if (temporizadorProductos) clearTimeout(temporizadorProductos);
+    if (id) {
+      temporizadorProductos = setTimeout(() => {
+        if (regionHover === id) mostrarProductosFlotantes(id);
+      }, RETRASO_PRODUCTOS);
     }
   });
 
