@@ -499,6 +499,30 @@ toque selecciona la región correctamente sin seleccionar texto; en
 escritorio la capa permanece inactiva y el hover/clic de ratón siguen
 funcionando exactamente igual que antes.
 
+**Octava vuelta**: dos ajustes tras seguir viendo el problema en tablet y
+pedir que el toque abra también las dos tarjetas (antes solo lo hacía el
+ratón):
+1. **Detección táctil más robusta**: el iPad (y algunos Android en modo
+   "escritorio") puede reportar `pointer: fine` / `hover: hover` aunque no
+   haya ratón conectado — es la conocida "pretensión de escritorio" de
+   iPadOS Safari. Por eso `esTactil` ya no depende solo de `matchMedia`:
+   ahora también comprueba `'ontouchstart' in window` y
+   `navigator.maxTouchPoints > 0`, así la capa `#toqueMapa` se activa igual
+   en esos casos. Verificado simulando ese escenario exacto con Playwright
+   (forzando `matchMedia` a devolver `hover:hover` mientras el contexto
+   tiene capacidad táctil): la capa se activa correctamente gracias al
+   respaldo de `maxTouchPoints`.
+2. **El toque abre las dos tarjetas**: antes, tocar una región en móvil
+   solo actualizaba el panel inferior (la capa llamaba a `activarRegion()`,
+   nunca a `activarRegionHover()`/`mostrarProductosFlotantes()`). Ahora el
+   toque llama a las tres, mostrando la tarjeta de datos y la de productos
+   al instante (sin el retraso de 900ms del hover de ratón — un toque ya es
+   una acción deliberada, no hace falta esperar a ver si el usuario "se
+   queda quieto"). Además, `activarRegion()` admite ahora un segundo
+   parámetro `{ desplazar: false }` para que, al venir de un toque, no
+   salte automáticamente al panel inferior — si no, ese salto taparía las
+   tarjetas recién abiertas.
+
 ## 12. El mapa como prioridad absoluta en móvil (implementado)
 
 Dado que el uso previsto de la aplicación es mayoritariamente desde el
