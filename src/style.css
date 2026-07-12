@@ -313,9 +313,13 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 }
 
 .productos-flotantes {
+  /* Fija arriba a la derecha (la tarjeta de datos ocupa arriba a la
+     izquierda) — antes seguía a la región tocada, pero así podía
+     solaparse con la tarjeta de datos y quedar ilegible. */
   position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
   pointer-events: none;
-  transform: translate(-50%, -50%);
   background: var(--bg-sunken);
   border: 1px solid var(--oro-suave);
   color: var(--ink);
@@ -327,7 +331,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   opacity: 0;
   transition: opacity 0.15s;
   z-index: 15;
-  max-width: 220px;
+  max-width: min(220px, calc(50% - 1.1rem));
 }
 
 .productos-flotantes.visible { opacity: 1; }
@@ -368,7 +372,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   transform: translateY(-6px);
   transition: opacity 0.15s, transform 0.15s;
   z-index: 16;
-  max-width: 200px;
+  max-width: min(200px, calc(50% - 1.1rem));
 }
 
 .info-region.visible { opacity: 1; transform: translateY(0); }

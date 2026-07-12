@@ -523,6 +523,33 @@ ratón):
    salte automáticamente al panel inferior — si no, ese salto taparía las
    tarjetas recién abiertas.
 
+**Novena vuelta**: las dos tarjetas podían solaparse (la de productos
+seguía anclada al centroide de la región tocada, así que según qué región
+podía caer justo encima de la tarjeta de datos, fija arriba a la
+izquierda). Cambios:
+- **Posiciones fijas**: `.productos-flotantes` deja de seguir a la región
+  y pasa a fijarse arriba a la derecha (`.info-region` ya estaba arriba a
+  la izquierda) — ya no dependen de qué región se ha tocado, así que nunca
+  pueden solaparse por posición. Se elimina `posicionEnMapa()` y el cálculo
+  de coordenadas en pantalla, que ya no hacían falta.
+- **Ancho responsivo**: aun así, en pantallas muy estrechas dos tarjetas de
+  ancho fijo (220px/200px) podían juntarse y solaparse. Se cambia a
+  `max-width: min(220px, calc(50% - 1.1rem))` (y equivalente en la otra),
+  para que cada una nunca ocupe más de la mitad del ancho disponible.
+  Verificado que, tras este cambio, sus rectángulos ya no se cruzan en un
+  iPhone 13 emulado.
+- **Cierra al tocar fuera**: nueva función `cerrarTarjetasTactiles()` —
+  oculta ambas tarjetas, quita el resaltado de la región y deselecciona
+  (vuelve el mapa a su estado neutro). Se llama en dos casos: al tocar
+  dentro del mapa pero fuera de cualquier región (el mar, el marco), y al
+  tocar en cualquier parte de la página fuera de `.map-wrap` mientras había
+  una región activa (listener de `touchstart` en `document`).
+
+Verificado con Playwright (contexto táctil): tras tocar una región, tocar
+el mar cierra las tarjetas; tras reabrir, tocar fuera del mapa (la
+cabecera) también las cierra. Confirmado con captura que ambas tarjetas se
+ven completas y sin solape, tanto en móvil como en escritorio.
+
 ## 12. El mapa como prioridad absoluta en móvil (implementado)
 
 Dado que el uso previsto de la aplicación es mayoritariamente desde el

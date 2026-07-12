@@ -206,15 +206,6 @@ import Layout from '../layouts/Layout.astro';
   let regionHover = null;
   let temporizadorProductos = null;
 
-  function posicionEnMapa(cx, cy) {
-    const punto = svg.createSVGPoint();
-    punto.x = cx;
-    punto.y = cy;
-    const p = punto.matrixTransform(svg.getScreenCTM());
-    const caja = mapWrap.getBoundingClientRect();
-    return { x: p.x - caja.left, y: p.y - caja.top };
-  }
-
   function activarRegionHover(id) {
     const el = elementosCCAA.get(id);
     if (!el) return;
@@ -238,8 +229,6 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function mostrarProductosFlotantes(id) {
-    const centro = centroides.get(id);
-    if (!centro) return;
     const nombre = NOMBRES_CCAA[id] || id;
     const productos = productosDeRegion(id);
 
@@ -249,9 +238,6 @@ import Layout from '../layouts/Layout.astro';
     }
     const grupos = [...porCategoria.entries()].sort((a, b) => b[1] - a[1]);
 
-    const pos = posicionEnMapa(centro[0], centro[1]);
-    productosFlotantes.style.left = `${pos.x}px`;
-    productosFlotantes.style.top = `${pos.y}px`;
     productosFlotantes.innerHTML = `
       <span class="pf-nombre">${escapar(nombre)}</span>
       ${
@@ -344,6 +330,18 @@ import Layout from '../layouts/Layout.astro';
     'ontouchstart' in window ||
     navigator.maxTouchPoints > 0;
 
+  function cerrarTarjetasTactiles() {
+    if (regionHover) elementosCCAA.get(regionHover)?.classList.remove('en-hover');
+    regionHover = null;
+    productosFlotantes.classList.remove('visible');
+    infoRegion.classList.remove('visible');
+    if (estado.regionSeleccionada) {
+      estado.regionSeleccionada = null;
+      pintarMapa();
+      pintarPanel();
+    }
+  }
+
   if (esTactil) {
     toqueMapa.classList.add('activa');
     let inicioToque = null;
@@ -365,7 +363,12 @@ import Layout from '../layouts/Layout.astro';
       const el = document.elementFromPoint(t.clientX, t.clientY);
       toqueMapa.style.pointerEvents = '';
       const region = el ? el.closest('.ccaa') : null;
-      if (!region) return;
+      if (!region) {
+        // toque dentro del mapa pero fuera de cualquier región: cierra las
+        // tarjetas y vuelve al mapa para elegir otra comunidad.
+        cerrarTarjetasTactiles();
+        return;
+      }
 
       const id = region.dataset.id;
       // Un toque es una acción deliberada (no hay "de paso" como con el
@@ -377,6 +380,14 @@ import Layout from '../layouts/Layout.astro';
       // taparía las tarjetas que se acaban de abrir.
       activarRegion(id, { desplazar: false });
     });
+
+    // Toque fuera del mapa por completo (cabecera, filtros, panel...):
+    // también cierra las tarjetas si había alguna región activa.
+    document.addEventListener('touchstart', (e) => {
+      if (regionHover && !mapWrap.contains(e.target)) {
+        cerrarTarjetasTactiles();
+      }
+    }, { passive: true });
   }
 
   // ——— panel lateral ———
