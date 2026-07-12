@@ -220,10 +220,21 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   stroke-width: 1.1;
   transition: filter 0.18s, opacity 0.18s, transform 0.2s ease-out, fill 0.15s;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.ccaa:hover, .ccaa:focus-visible {
+.ccaa:focus-visible {
   filter: brightness(1.35) drop-shadow(0 0 10px rgba(234, 176, 74, 0.55));
+}
+
+/* el efecto hover solo tiene sentido con un puntero real (ratón/trackpad):
+   en pantallas táctiles, :hover se queda "pegado" tras tocar, sin forma de
+   deshacerlo con el dedo. */
+@media (hover: hover) and (pointer: fine) {
+  .ccaa:hover {
+    filter: brightness(1.35) drop-shadow(0 0 10px rgba(234, 176, 74, 0.55));
+  }
 }
 
 .ccaa.en-hover {

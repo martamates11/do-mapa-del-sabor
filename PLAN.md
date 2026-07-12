@@ -381,3 +381,22 @@ interactividad enriquecida en el hover.
 - Sustituye por completo el tooltip pequeño anterior (nombre + nº de
   productos siguiendo al ratón), que quedaba redundante con esta información
   más rica.
+
+**Corrección para móvil**: el hover (agrandar región, tarjetas flotantes)
+solo tiene sentido con ratón/trackpad. En pantallas táctiles, al tocar y
+deslizar el dedo por el mapa, el efecto se quedaba "pegado" en la última
+región tocada (sin forma de "salir" con el dedo como se hace apartando el
+ratón), y además el navegador aplicaba su resalte azul nativo de toque.
+Solución:
+- `src/pages/index.astro`: el listener de `pointermove` que activa el hover
+  ignora los eventos con `pointerType === 'touch'` — en pantallas táctiles
+  solo queda el toque para seleccionar región (comportamiento ya existente,
+  sin cambios).
+- `src/style.css`: `-webkit-tap-highlight-color: transparent` en `.ccaa`
+  para quitar el resalte azul nativo, y la regla `:hover` (antes aplicada
+  siempre) queda dentro de `@media (hover: hover) and (pointer: fine)`, para
+  que ningún estado de solo-hover pueda quedar pegado tras un toque.
+Verificado con Playwright emulando un dispositivo táctil: con
+`pointerType: touch` la región no se agranda ni cambia de color; con
+`pointerType: mouse` sigue haciéndolo igual que antes; el toque para
+seleccionar región sigue abriendo el panel correctamente.
