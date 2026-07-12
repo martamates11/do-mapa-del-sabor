@@ -525,4 +525,10 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   .map-card, .panel { position: static; }
   .panel { max-height: none; min-height: 0; }
   .brand-claim { display: none; }
+
+  /* El mapa es lo primordial: en móvil se muestra el primero, sin tener
+     que bajar por el texto de cabecera ni los filtros para llegar a él. */
+  main { display: flex; flex-direction: column; }
+  .explorer { order: -1; margin-top: 0.8rem; }
+  .hero { padding-top: 1.2rem; }
 }

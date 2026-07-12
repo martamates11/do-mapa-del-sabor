@@ -440,3 +440,62 @@ interactivos tipo aplicación (mapa, chips, botones) frente a páginas de
 lectura de texto largo. Verificado simulando exactamente el gesto del
 fallo (arrastre desde un chip de filtro hasta el mapa): ya no se selecciona
 nada, y el buscador sigue funcionando.
+
+**Quinta vuelta (seguía igual, con segunda captura idéntica)**: investigado
+el problema — es un **fallo conocido y confirmado de WebKit** (reportado en
+los foros oficiales de Apple Developer, iOS 15 en adelante e incluso
+versiones muy recientes): `-webkit-touch-callout: none` deja de respetarse
+de forma fiable en iOS reciente, aparentemente por interferencia de **Live
+Text** (la función de iOS que analiza el contenido visual al mantener
+pulsado), que tiene su propia gestión del gesto y puede saltarse esa CSS.
+Fuente: [Apple Developer Forums — "webkit-touch-callout: none; not working
+in Safari"](https://developer.apple.com/forums/thread/808606).
+
+Según la misma investigación, aunque la CSS falle, **el gesto de mantener
+pulsado sigue disparando el evento `contextmenu` en JavaScript**, así que se
+añade una última red de seguridad que no depende de que el navegador
+respete la propiedad CSS:
+```js
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+```
+Verificado que cancela el evento correctamente y que el clic para
+seleccionar región sigue funcionando sin cambios.
+
+**Si esto tampoco lo resuelve del todo**: sería indicio de que es
+literalmente la función de sistema de iOS (Live Text / "Visual Look Up"),
+que puede operar por debajo del navegador sobre cualquier contenido en
+pantalla — en ese caso no habría forma de desactivarlo desde el código de
+la web, y la comprobación sería: Ajustes de iPhone → General → Idioma y
+región → desactivar "Texto en vivo" (o similar, el nombre exacto varía por
+versión de iOS), para confirmar el diagnóstico.
+
+**Sexta vuelta**: la profesora desactivó "Texto en vivo" en Ajustes y el
+problema persistió igual — **descarta a Live Text como causa**, ya que si
+fuera una función de sistema, desactivarla habría cambiado algo. Importante
+matiz: en el momento de esa prueba, el arreglo del `contextmenu` (quinta
+vuelta) **todavía no estaba desplegado**, así que de hecho no se había
+probado en un dispositivo real todavía. Queda pendiente confirmar si,
+ahora que sí está desplegado, resuelve el problema — si tampoco basta,
+significa que ni la CSS ni la intercepción de `contextmenu` cubren el
+mecanismo real que lo dispara en el dispositivo de la profesora, y haría
+falta seguir investigando con más detalle (idealmente con acceso remoto de
+depuración al dispositivo, no solo capturas de pantalla).
+
+## 12. El mapa como prioridad absoluta en móvil (implementado)
+
+Dado que el uso previsto de la aplicación es mayoritariamente desde el
+móvil, se reordena la página para que el mapa sea lo primero que se ve, sin
+necesidad de bajar por el texto de cabecera ni los filtros.
+
+**Cómo**: en el media query móvil (`max-width: 940px`) ya existente en
+`style.css`, `main` pasa a `display:flex; flex-direction:column`, y
+`.explorer` (mapa + panel) recibe `order:-1` para pintarse el primero,
+aunque en el HTML siga estando después del `hero` y los `filters` (el
+orden en el documento no cambia, solo el visual — no afecta a la lectura
+por lectores de pantalla ni al SEO). El resto de secciones (cabecera con
+estadísticas, chips de categoría, buscador) quedan debajo del mapa en
+móvil.
+
+Verificado con Playwright (viewport de móvil): el mapa queda dentro del
+área visible nada más cargar la página, sin hacer scroll, y el clic para
+seleccionar región sigue funcionando exactamente igual.
