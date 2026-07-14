@@ -768,3 +768,22 @@ lista), no una señal de "quiero volver al mapa a elegir otra". El cierre
 tenía sentido en origen. Verificado con Playwright: tocar un enlace de
 ruta con `target="_blank"` abre pestaña nueva y el panel sigue mostrando
 la región seleccionada en vez de resetearse.
+
+## 21. Fila de dialecto en la tarjeta geográfica (implementado); bandera pendiente
+
+Se añade una fila más a la tarjeta de datos de la CCAA: **Dialecto**, con
+el castellano y, donde lo hay, la lengua cooficial o habla local más
+conocida (catalán, euskera, gallego, asturiano, aranés...). Es una
+simplificación divulgativa pensada para el público general, no una
+clasificación lingüística ni jurídica exhaustiva — está anotado así en la
+cabecera de `datos-ccaa.js`. Verificado con Playwright que la fila no
+desborda la tarjeta ni en el caso más largo (Aragón).
+
+**Pendiente**: también se pidió añadir la bandera oficial de cada CCAA,
+pequeña, arriba a la derecha de esta misma tarjeta. Wikimedia Commons
+—donde están los SVG oficiales— está bloqueado por la política de red de
+esta sesión (confirmado con `/__agentproxy/status`: 403 a
+`upload.wikimedia.org`). El usuario ha decidido aparcarlo para más
+adelante; cuando se retome, las opciones planteadas fueron: que suba él
+mismo las 19 imágenes, o recrearlas de forma aproximada en CSS puro (sin
+garantía de fidelidad al diseño oficial).
