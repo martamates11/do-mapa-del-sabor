@@ -606,6 +606,23 @@ la fuente y las salvedades, comentario de "muestra curada, pendiente de
 cotejo" cuando aplica, y un fichero `-indexadas.js` hermano que añade el
 `slug` (mismo `slugify()` que ya se usaba).
 
+#### Fuentes consultadas (para la próxima revisión anual)
+
+Restaurantes con estrella (Guía Michelin):
+- https://guide.michelin.com/es/es — buscador oficial, filtrar por España; cada `enlace` del dataset apunta a la ficha concreta cuando se localizó.
+- Prensa especializada de la gala anual (suele celebrarse en noviembre): Hosteltur, El País Gastronomía, ABC, La Vanguardia — útiles para detectar altas/bajas de la edición nueva antes de recorrer la guía restaurante a restaurante.
+
+Rutas gastronómicas:
+- https://wineroutesofspain.com/en/wine-routes/ y https://acevin.es — listado oficial "Rutas del Vino de España" (ambas webs bloquearon el scraping automatizado durante esta investigación; puede que haga falta consultarlas a mano o con otra IP/navegador).
+- https://rutadeljabugo.travel/ — Ruta del Jabugo (Huelva).
+- https://www.rutajamondeguijuelo.com/ — Ruta del Jamón de Guijuelo (Salamanca).
+- https://www.turismoextremadura.com/es/ven-a-extremadura/Ruta-del-Iberico/ y .../Ruta-del-Queso/ — rutas extremeñas del ibérico y el queso.
+- https://www.rutadelquesoidiazabal.com/es/ — Ruta del Queso Idiazábal (País Vasco).
+- https://www.turismocastillalamancha.es/es/enogastronomia/el-queso-manchego-ciudad-real-toledo-cuenca — Ruta del Queso Manchego.
+- https://www.jaenparaisointerior.es/es/w/ix-rutas-del-aceite-de-jaen — Rutas del Aceite de Jaén.
+- https://www.turismepriorat.org — Ruta del Aceite del Priorat (DOP Siurana).
+- https://sidradeasturias.es — Ruta de la Sidra de Asturias.
+
 ### 13.2 Cómo se generaliza el mapa a tres modos
 
 El script de `index.astro` no distingue nunca "estoy en modo tal", sino
