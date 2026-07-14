@@ -588,8 +588,10 @@ tocar código), igual que se hizo en su día con los productos DOP/IGP:
   verificar); el bloque de 1 estrella de Aragón y Castilla y León se apoya
   en prensa regional y debe tratarse como muestra representativa, no
   definitiva. **Pendiente**: Ceuta y Melilla, sin ningún restaurante
-  localizado con distinción; no incluye Bib Gourmand en esta primera
-  versión. Solo se guardan datos objetivos (nombre, ubicación, distinción,
+  localizado con distinción. No incluye Bib Gourmand: se quitó del filtro
+  de distinciones (`DISTINCIONES`) por no haber ningún restaurante con esa
+  categoría en el dataset — un filtro sin ningún resultado posible no
+  aporta nada. Solo se guardan datos objetivos (nombre, ubicación, distinción,
   tipo de cocina, descripción breve redactada por el asistente) y un enlace
   a la ficha oficial de Michelin cuando se ha localizado — nunca se
   reproduce el texto editorial de la guía, por ser contenido protegido.

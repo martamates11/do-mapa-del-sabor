@@ -7,10 +7,10 @@
 // PENDIENTE: no hay ningún restaurante localizado con distinción para Ceuta
 // (18) ni Melilla (19) — Ceuta perdió su único distintivo ("Plato Michelin",
 // que no es estrella) en la edición 2026, y no se encontraron fuentes fiables
-// para Melilla. No incluye Bib Gourmand en esta primera versión.
+// para Melilla. No incluye Bib Gourmand: no hay ningún restaurante con esa
+// distinción en el dataset, así que no tiene sentido ofrecerlo como filtro.
 
 export const DISTINCIONES = {
-  'Bib Gourmand': { icono: '😋', nombre: 'Bib Gourmand', orden: 0 },
   '1 estrella': { icono: '⭐', nombre: '1 estrella', orden: 1 },
   '2 estrellas': { icono: '⭐⭐', nombre: '2 estrellas', orden: 2 },
   '3 estrellas': { icono: '⭐⭐⭐', nombre: '3 estrellas', orden: 3 },
