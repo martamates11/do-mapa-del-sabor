@@ -261,16 +261,17 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   color: var(--ink);
 }
 
-/* en pantallas de móvil no cabe el nombre completo de los tres modos sin
-   que el selector quede diminuto o fuerce el ancho de la tarjeta (ver el
-   arreglo de grid-template-columns más arriba): se muestra una versión
-   corta del texto en vez de encoger la letra hasta ser ilegible. */
-.modo-corto { display: none; }
+/* utilidad general: en pantallas de móvil no siempre cabe el texto
+   completo (selector de modo, tarjetas de estadística...) sin que el
+   elemento quede diminuto o fuerce el ancho de la tarjeta (ver el arreglo
+   de grid-template-columns más arriba). Se muestra una versión corta en
+   vez de encoger la letra hasta ser ilegible. */
+.texto-corto { display: none; }
 
 @media (max-width: 600px) {
   .modo-toggle { font-size: 0.78rem; }
-  .modo-largo { display: none; }
-  .modo-corto { display: inline; }
+  .texto-largo { display: none; }
+  .texto-corto { display: inline; }
 }
 
 .map-wrap {

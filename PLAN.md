@@ -693,3 +693,17 @@ siguientes) y la última ("17 comunidades", ya no aporta tanto). Al no
 depender del modo, `pintarStats()` ya no se repinta en `cambiarModo()`
 (su contenido no cambia) y se elimina el campo `statsBreakdown` de
 `MODOS`, que ya no se usa.
+
+## 17. Icono en vez de texto para restaurantes/rutas en las tarjetas del hero (implementado)
+
+Las etiquetas "restaurantes con estrella" y "rutas gastronómicas" de las
+dos tarjetas nuevas eran tan largas que en móvil la fila desplazable
+dejaba la última tarjeta (rutas) fuera de la vista inicial. Se generaliza
+la utilidad `.texto-largo`/`.texto-corto` que ya se usaba solo en el
+selector de modo (renombrada desde `.modo-largo`/`.modo-corto`, ya que
+ahora sirve para cualquier texto que necesite una versión corta en
+móvil) y se usa también en las tarjetas de estadística: por debajo de
+600px, "restaurantes con estrella" se sustituye por ⭐ y "rutas
+gastronómicas" por 🍷 (DOP/IGP/ETG no cambian, ya eran cortas). Verificado
+con Playwright: las 5 tarjetas caben ya en una sola línea sin necesidad
+de desplazar en un iPhone 13.
