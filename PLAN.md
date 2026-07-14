@@ -747,3 +747,24 @@ cierra. Verificado con Playwright (`Input.dispatchTouchEvent` para
 simular la secuencia touchstart→touchmove→touchend): un scroll fuera del
 mapa mantiene la selección, un toque real fuera del mapa la sigue
 cerrando.
+
+## 20. Tocar un enlace del panel (producto/restaurante/ruta) desactivaba la selección en móvil (corregido)
+
+El arreglo de la sección 19 (distinguir toque real de scroll antes de
+cerrar "al tocar fuera del mapa") seguía teniendo un problema: el panel
+lateral —donde vive la lista de la región seleccionada, con los enlaces
+a cada producto/restaurante/ruta— también cuenta como "fuera del mapa".
+Así que tocar un enlace de una ruta o restaurante (o el botón "volver",
+o el ranking de regiones) disparaba igualmente `cerrarTarjetasTactiles()`
+en el mismo `touchend`, que repinta el panel entero — destruyendo el
+propio `<a>` que se acababa de tocar antes de que el navegador llegara a
+procesar la navegación. El usuario lo notaba como "elijo la ruta que
+quiero ver y se desactiva todo, no me manda al enlace".
+
+Se corrige excluyendo el panel (`#panel`) de este cierre: tocar dentro
+de él es seguir explorando la misma región ya seleccionada (es su propia
+lista), no una señal de "quiero volver al mapa a elegir otra". El cierre
+"al tocar fuera" queda así limitado a la cabecera/filtros, que es donde
+tenía sentido en origen. Verificado con Playwright: tocar un enlace de
+ruta con `target="_blank"` abre pestaña nueva y el panel sigue mostrando
+la región seleccionada en vez de resetearse.
