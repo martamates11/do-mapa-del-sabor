@@ -173,15 +173,22 @@ import Layout from '../layouts/Layout.astro';
     const dop = PRODUCTOS.filter((p) => p.t === 'DOP').length;
     const igp = PRODUCTOS.filter((p) => p.t === 'IGP').length;
     const etg = PRODUCTOS.filter((p) => p.t === 'ETG').length;
+    // en móvil, "restaurantes con estrella" y "rutas gastronómicas" no
+    // caben junto a las otras tres sin partir la fila en dos o forzar el
+    // scroll a un lado que deja la última tarjeta fuera de la vista
+    // inicial: por debajo de 600px se muestra solo el icono del modo.
     const stats = [
-      [dop, 'DOP'],
-      [igp, 'IGP'],
-      [etg, 'ETG'],
-      [RESTAURANTES.length, 'restaurantes con estrella'],
-      [RUTAS.length, 'rutas gastronómicas'],
+      [dop, 'DOP', 'DOP'],
+      [igp, 'IGP', 'IGP'],
+      [etg, 'ETG', 'ETG'],
+      [RESTAURANTES.length, 'restaurantes con estrella', '⭐'],
+      [RUTAS.length, 'rutas gastronómicas', '🍷'],
     ];
     $('#stats-row').innerHTML = stats
-      .map(([n, l]) => `<div class="stat"><span class="num">${n}</span><span class="lbl">${escapar(l)}</span></div>`)
+      .map(
+        ([n, largo, corto]) =>
+          `<div class="stat"><span class="num">${n}</span><span class="lbl"><span class="texto-largo">${escapar(largo)}</span><span class="texto-corto">${escapar(corto)}</span></span></div>`
+      )
       .join('');
   }
 
@@ -191,7 +198,7 @@ import Layout from '../layouts/Layout.astro';
     $('#modoToggle').innerHTML = Object.entries(MODOS)
       .map(
         ([clave, m]) =>
-          `<button data-modo="${clave}" aria-pressed="${estado.modo === clave}">${m.icono} <span class="modo-largo">${m.boton}</span><span class="modo-corto">${m.botonCorto}</span></button>`
+          `<button data-modo="${clave}" aria-pressed="${estado.modo === clave}">${m.icono} <span class="texto-largo">${m.boton}</span><span class="texto-corto">${m.botonCorto}</span></button>`
       )
       .join('');
   }
