@@ -607,4 +607,20 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   .hero { order: 0; padding-top: 1.2rem; }
   .explorer { order: 1; margin-top: 0.8rem; }
   .filters { order: 2; position: static; }
+
+  /* Con 5 tarjetas de estadística, ninguna combinación de texto (menos aún
+     en los modos de restaurantes/rutas, con etiquetas largas tipo "3
+     estrellas") cabe en una sola fila sin partirse en dos líneas de
+     tarjetas en una pantalla de móvil. En vez de encoger el texto hasta
+     ser ilegible, la fila se convierte en una única línea desplazable. */
+  .stats-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+  .stats-row::-webkit-scrollbar { display: none; }
+  .stat { flex: 0 0 auto; }
 }
