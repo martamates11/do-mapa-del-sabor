@@ -129,7 +129,6 @@ import Layout from '../layouts/Layout.astro';
       intro: 'Cada comunidad guarda quesos, vinos, aceites y dulces que solo pueden nacer allí. Cuanto más dorada aparece en el mapa, más tesoros reúne.',
       subtitulo: 'con sello de calidad europea',
       placeholder: 'Busca un producto: manchego, albariño, piquillo…',
-      statsBreakdown: (lista) => ['DOP', 'IGP', 'ETG'].map((t) => [lista.filter((p) => p.t === t).length, t]),
     },
     restaurantes: {
       boton: 'Restaurantes con estrella', botonCorto: 'Restaurantes', icono: '⭐',
@@ -145,7 +144,6 @@ import Layout from '../layouts/Layout.astro';
       intro: 'Cada comunidad esconde mesas reconocidas por la Guía Michelin. Cuanto más dorada aparece en el mapa, más distinciones reúne.',
       subtitulo: 'con distinción Michelin',
       placeholder: 'Busca un restaurante o un chef…',
-      statsBreakdown: (lista) => ['3 estrellas', '2 estrellas', '1 estrella'].map((d) => [lista.filter((r) => r.distincion === d).length, d]),
     },
     rutas: {
       boton: 'Rutas gastronómicas', botonCorto: 'Rutas', icono: '🍷',
@@ -161,7 +159,6 @@ import Layout from '../layouts/Layout.astro';
       intro: 'Cada comunidad tiene itinerarios propios para descubrir sobre el terreno el vino, el jamón, el queso o el aceite de la zona.',
       subtitulo: 'reconocida por su organismo certificador',
       placeholder: 'Busca una ruta: vino, jamón, queso…',
-      statsBreakdown: (lista) => ['vino', 'jamón', 'queso', 'aceite', 'otros'].map((t) => [lista.filter((r) => r.tipo === t).length, TIPOS_RUTA[t].nombre]),
     },
   };
 
@@ -169,12 +166,20 @@ import Layout from '../layouts/Layout.astro';
     return MODOS[estado.modo];
   }
 
-  // ——— estadísticas del hero ———
+  // ——— estadísticas del hero: un resumen fijo de toda la colección, igual
+  // en los tres modos (no depende de qué mapa se esté viendo ni de filtros) ———
 
   function pintarStats() {
-    const cfg = cfgActual();
-    const total = cfg.datos.length;
-    const stats = [[total, `${cfg.unidadPlural} en la muestra`], ...cfg.statsBreakdown(cfg.datos), [17, 'comunidades']];
+    const dop = PRODUCTOS.filter((p) => p.t === 'DOP').length;
+    const igp = PRODUCTOS.filter((p) => p.t === 'IGP').length;
+    const etg = PRODUCTOS.filter((p) => p.t === 'ETG').length;
+    const stats = [
+      [dop, 'DOP'],
+      [igp, 'IGP'],
+      [etg, 'ETG'],
+      [RESTAURANTES.length, 'restaurantes con estrella'],
+      [RUTAS.length, 'rutas gastronómicas'],
+    ];
     $('#stats-row').innerHTML = stats
       .map(([n, l]) => `<div class="stat"><span class="num">${n}</span><span class="lbl">${escapar(l)}</span></div>`)
       .join('');
@@ -204,7 +209,6 @@ import Layout from '../layouts/Layout.astro';
     $('#leyendaMas').textContent = `más ${unidad}`;
     ocultarHover();
     pintarModoToggle();
-    pintarStats();
     pintarChips();
     pintarMapa();
     pintarPanel();

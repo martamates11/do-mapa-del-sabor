@@ -680,3 +680,16 @@ sin partirse en dos líneas de tarjetas. En vez de encoger más el texto
 una única fila, desplazable con el dedo, en vez de dos filas apiladas.
 Verificado con Playwright en los tres modos (productos/restaurantes/
 rutas): una sola fila visual en los tres casos, sin desbordar la página.
+
+## 16. Tarjetas del hero: resumen fijo en vez de depender del modo (implementado)
+
+Las 5 tarjetas de estadística encima del mapa dejan de cambiar según el
+modo activo (antes mostraban "productos en la muestra"/DOP/IGP/ETG/
+comunidades en modo productos, y otro desglose distinto en restaurantes/
+rutas). Ahora son un resumen fijo, igual en los tres modos: **DOP, IGP,
+ETG, restaurantes con estrella y rutas gastronómicas** — se quita la
+primera tarjeta (el total de la muestra, redundante con las tres
+siguientes) y la última ("17 comunidades", ya no aporta tanto). Al no
+depender del modo, `pintarStats()` ya no se repinta en `cambiarModo()`
+(su contenido no cambia) y se elimina el campo `statsBreakdown` de
+`MODOS`, que ya no se usa.
