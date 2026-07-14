@@ -241,6 +241,7 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 
 .modo-toggle button {
   flex: 1;
+  min-width: 0; /* si no, un botón flex no encoge por debajo del ancho de su texto */
   border: none;
   background: none;
   color: var(--ink-2);
@@ -260,9 +261,16 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   color: var(--ink);
 }
 
-@media (max-width: 480px) {
-  .modo-toggle { font-size: 0.68rem; }
-  .modo-toggle button { padding: 0.4rem 0.25rem; }
+/* en pantallas de móvil no cabe el nombre completo de los tres modos sin
+   que el selector quede diminuto o fuerce el ancho de la tarjeta (ver el
+   arreglo de grid-template-columns más arriba): se muestra una versión
+   corta del texto en vez de encoger la letra hasta ser ilegible. */
+.modo-corto { display: none; }
+
+@media (max-width: 600px) {
+  .modo-toggle { font-size: 0.78rem; }
+  .modo-largo { display: none; }
+  .modo-corto { display: inline; }
 }
 
 .map-wrap {
@@ -582,7 +590,11 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
 /* ————— responsive ————— */
 
 @media (max-width: 940px) {
-  .explorer { grid-template-columns: 1fr; }
+  /* minmax(0, 1fr) y no 1fr a secas: si no, un contenido que no puede
+     encogerse (como el texto sin salto de línea del selector de modo)
+     puede forzar a esta columna — y por tanto al mapa dentro, que es
+     width:100% — a ensancharse más que la pantalla ("grid blowout"). */
+  .explorer { grid-template-columns: minmax(0, 1fr); }
   .map-card, .panel { position: static; }
   .panel { max-height: none; min-height: 0; }
   .brand-claim { display: none; }
