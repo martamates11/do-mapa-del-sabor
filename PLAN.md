@@ -666,3 +666,15 @@ de móvil se quedó en `1fr` a secas, sin el `minmax(0, ...)`. Se corrige
 esa regla y, además, se añade una versión corta de las tres etiquetas
 ("D.O." / "Restaurantes" / "Rutas") que se muestra por debajo de 600px en
 vez de encoger la letra hasta ser ilegible.
+
+## 15. Tarjetas de estadística partidas en dos líneas en móvil (corregido)
+
+Con 5 tarjetas de estadística y etiquetas de cierta longitud (más aún en
+los modos de restaurantes/rutas: "3 estrellas", "rutas del jamón"...),
+ninguna combinación de texto cabe en una sola fila de un móvil estrecho
+sin partirse en dos líneas de tarjetas. En vez de encoger más el texto
+(ya bastante pequeño) o acortar más etiquetas, `.stats-row` pasa a
+`flex-wrap: nowrap` con `overflow-x: auto` en el media query de móvil:
+una única fila, desplazable con el dedo, en vez de dos filas apiladas.
+Verificado con Playwright en los tres modos (productos/restaurantes/
+rutas): una sola fila visual en los tres casos, sin desbordar la página.
