@@ -566,3 +566,71 @@ visual (no afecta a lectores de pantalla ni a SEO).
 Verificado con Playwright (viewport de móvil): el mapa queda dentro del
 área visible nada más cargar la página, sin hacer scroll, y el clic para
 seleccionar región sigue funcionando exactamente igual.
+
+## 13. Tres modos del mapa: productos / restaurantes / rutas (implementado)
+
+Además de las denominaciones de origen, el mapa ahora tiene un selector de
+tres modos (encima del mapa, estilo segmented control): **Denominaciones
+de origen** (el original), **Restaurantes con estrella** (Guía Michelin) y
+**Rutas gastronómicas** (vino, jamón, queso, aceite...). Los tres
+comparten un único mapa, un único sistema de hover/toque y un único panel
+lateral — no se ha duplicado nada de la arquitectura táctil ya depurada en
+las secciones 11 y 12.
+
+### 13.1 Origen de los datos nuevos
+
+Investigados por dos subagentes de Claude en paralelo (búsqueda web, sin
+tocar código), igual que se hizo en su día con los productos DOP/IGP:
+
+- **`src/data/restaurantes.js`** (60 restaurantes, 17 de 19 CCAA): edición
+  2026 de la Guía Michelin España (gala de noviembre de 2025). Contrastados
+  con más cuidado los de 2 y 3 estrellas (listas cerradas, fáciles de
+  verificar); el bloque de 1 estrella de Aragón y Castilla y León se apoya
+  en prensa regional y debe tratarse como muestra representativa, no
+  definitiva. **Pendiente**: Ceuta y Melilla, sin ningún restaurante
+  localizado con distinción; no incluye Bib Gourmand en esta primera
+  versión. Solo se guardan datos objetivos (nombre, ubicación, distinción,
+  tipo de cocina, descripción breve redactada por el asistente) y un enlace
+  a la ficha oficial de Michelin cuando se ha localizado — nunca se
+  reproduce el texto editorial de la guía, por ser contenido protegido.
+- **`src/data/rutas.js`** (49 rutas: 38 vino, 4 jamón, 4 queso, 2 aceite, 1
+  otras): las de vino vienen del sello ACEVIN "Rutas del Vino de España"
+  (acevin.es / wineroutesofspain.com dieron error 403 al scraping directo,
+  así que los nombres están cruzados con varias fuentes secundarias, no
+  descargados literalmente del listado maestro). Las de jamón/queso/aceite
+  están verificadas contra la web propia de cada ruta. **Pendiente**:
+  Cantabria, Ceuta y Melilla sin ninguna ruta localizada.
+
+Ambos ficheros siguen la misma convención que `productos.js`: cabecera con
+la fuente y las salvedades, comentario de "muestra curada, pendiente de
+cotejo" cuando aplica, y un fichero `-indexadas.js` hermano que añade el
+`slug` (mismo `slugify()` que ya se usaba).
+
+### 13.2 Cómo se generaliza el mapa a tres modos
+
+El script de `index.astro` no distingue nunca "estoy en modo tal", sino
+que cada modo se registra una vez en un objeto `MODOS` con la misma forma:
+qué dataset usa, cómo se agrupan sus elementos (categoría de producto,
+distinción Michelin o tipo de ruta), cómo se etiquetan, a qué enlazan y qué
+textos mostrar. El resto del código (pintar mapa, hover, tarjetas
+flotantes, panel, buscador) llama siempre a `cfgActual()` y nunca sabe qué
+modo está activo — así no hubo que duplicar la lógica de touch/hover ya
+depurada, solo generalizarla.
+
+Restaurantes y rutas no tienen todavía ficha propia (`/productos/[slug]`
+sí existe, `/restaurantes/[slug]` y `/rutas/[slug]` no): cuando hay
+`enlace` oficial se linka directamente a él (`target="_blank"`); si no,
+se muestra el nombre sin enlace en vez de forzar una URL rota.
+
+### 13.3 Bug encontrado y corregido durante la prueba
+
+Al probar el cambio de modo con Playwright en contexto táctil, se detectó
+que **tocar fuera del mapa por completo no cerraba las tarjetas** (la
+funcionalidad de la sección 11, "cierra al tocar fuera"): la variable
+`regionHover` se actualizaba en el hover de ratón pero nunca en el flujo de
+toque, así que el listener que decide si cerrar (`if (regionHover && ...)`)
+nunca se disparaba fuera del propio mapa. Se corrige asignando
+`regionHover = id` también en el `touchend` del overlay táctil, y quitando
+el resaltado de la región anterior si se toca una distinta sin haber
+cerrado antes. Verificado de nuevo: tocar fuera del mapa ya cierra las
+tarjetas correctamente.
