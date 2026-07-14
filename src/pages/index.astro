@@ -116,7 +116,7 @@ import Layout from '../layouts/Layout.astro';
 
   const MODOS = {
     productos: {
-      boton: 'Denominaciones de origen', icono: '🧀',
+      boton: 'Denominaciones de origen', botonCorto: 'D.O.', icono: '🧀',
       datos: PRODUCTOS,
       grupos: CATEGORIAS,
       grupoDe: (it) => it.c,
@@ -132,7 +132,7 @@ import Layout from '../layouts/Layout.astro';
       statsBreakdown: (lista) => ['DOP', 'IGP', 'ETG'].map((t) => [lista.filter((p) => p.t === t).length, t]),
     },
     restaurantes: {
-      boton: 'Restaurantes con estrella', icono: '⭐',
+      boton: 'Restaurantes con estrella', botonCorto: 'Restaurantes', icono: '⭐',
       datos: RESTAURANTES,
       grupos: DISTINCIONES,
       grupoDe: (it) => it.distincion,
@@ -148,7 +148,7 @@ import Layout from '../layouts/Layout.astro';
       statsBreakdown: (lista) => ['3 estrellas', '2 estrellas', '1 estrella'].map((d) => [lista.filter((r) => r.distincion === d).length, d]),
     },
     rutas: {
-      boton: 'Rutas gastronómicas', icono: '🍷',
+      boton: 'Rutas gastronómicas', botonCorto: 'Rutas', icono: '🍷',
       datos: RUTAS,
       grupos: TIPOS_RUTA,
       grupoDe: (it) => it.tipo,
@@ -186,7 +186,7 @@ import Layout from '../layouts/Layout.astro';
     $('#modoToggle').innerHTML = Object.entries(MODOS)
       .map(
         ([clave, m]) =>
-          `<button data-modo="${clave}" aria-pressed="${estado.modo === clave}">${m.icono} ${m.boton}</button>`
+          `<button data-modo="${clave}" aria-pressed="${estado.modo === clave}">${m.icono} <span class="modo-largo">${m.boton}</span><span class="modo-corto">${m.botonCorto}</span></button>`
       )
       .join('');
   }

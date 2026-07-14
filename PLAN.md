@@ -651,3 +651,18 @@ nunca se disparaba fuera del propio mapa. Se corrige asignando
 el resaltado de la región anterior si se toca una distinta sin haber
 cerrado antes. Verificado de nuevo: tocar fuera del mapa ya cierra las
 tarjetas correctamente.
+
+## 14. Mapa desbordado en móvil por el selector de modo (corregido)
+
+Con las etiquetas completas de los tres modos ("Denominaciones de
+origen", "Restaurantes con estrella", "Rutas gastronómicas") en una sola
+línea sin salto, el selector podía forzar a toda la tarjeta del mapa —y al
+`<svg>` de dentro, que es `width:100%`— a ensancharse más que la pantalla
+en móvil. La causa real no era el tamaño del texto sino un descuido de
+CSS Grid: la regla de escritorio ya usaba `minmax(0, 2.3fr) minmax(280px,
+0.9fr)` para evitar justo este problema ("grid blowout": un hijo que no
+puede encoger fuerza a crecer la pista de la cuadrícula), pero la regla
+de móvil se quedó en `1fr` a secas, sin el `minmax(0, ...)`. Se corrige
+esa regla y, además, se añade una versión corta de las tres etiquetas
+("D.O." / "Restaurantes" / "Rutas") que se muestra por debajo de 600px en
+vez de encoger la letra hasta ser ilegible.
