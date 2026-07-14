@@ -311,6 +311,7 @@ import Layout from '../layouts/Layout.astro';
   // ——— hover enriquecido: región más grande, tarjeta de datos al instante,
   // productos con un pequeño retraso (solo si el ratón se queda quieto) ———
   const mapWrap = $('.map-wrap');
+  const panelEl = $('#panel');
   const productosFlotantes = $('#productosFlotantes');
   const infoRegion = $('#infoRegion');
   const RETRASO_PRODUCTOS = 900; // ms sin mover el ratón antes de abrir la tarjeta
@@ -496,17 +497,25 @@ import Layout from '../layouts/Layout.astro';
       activarRegion(id, { desplazar: false });
     });
 
-    // Toque fuera del mapa por completo (cabecera, filtros, panel...):
-    // también cierra las tarjetas si había alguna región activa. Igual que
-    // en el toque dentro del mapa, hace falta distinguir un toque real de
-    // un arrastre: cerrar ya en touchstart hacía que el simple gesto de
-    // empezar a hacer scroll con el dedo apoyado fuera del mapa (p. ej. en
-    // el panel, para bajar a ver la lista de esa misma región) cerrase la
-    // selección antes de que diera tiempo a desplazarse.
+    // Toque fuera del mapa por completo (cabecera, filtros...): también
+    // cierra las tarjetas si había alguna región activa. El panel se
+    // excluye a propósito: es donde vive la lista de la propia región
+    // seleccionada (productos/restaurantes/rutas con su enlace, el botón
+    // "volver"...), así que tocar dentro de él es seguir explorando esa
+    // misma región, no una señal de "quiero abandonarla". Si no se
+    // excluyera, cerrarTarjetasTactiles() repinta el panel entero en
+    // touchend, y el enlace que se acababa de tocar quedaba destruido
+    // antes de que el navegador llegase a procesar la navegación.
+    //
+    // Igual que en el toque dentro del mapa, hace falta distinguir un
+    // toque real de un arrastre: cerrar ya en touchstart hacía que el
+    // simple gesto de empezar a hacer scroll con el dedo apoyado fuera
+    // del mapa cerrase la selección antes de que diera tiempo a
+    // desplazarse.
     let inicioToqueFuera = null;
 
     document.addEventListener('touchstart', (e) => {
-      if (!regionHover || mapWrap.contains(e.target)) {
+      if (!regionHover || mapWrap.contains(e.target) || panelEl.contains(e.target)) {
         inicioToqueFuera = null;
         return;
       }
