@@ -497,11 +497,31 @@ import Layout from '../layouts/Layout.astro';
     });
 
     // Toque fuera del mapa por completo (cabecera, filtros, panel...):
-    // también cierra las tarjetas si había alguna región activa.
+    // también cierra las tarjetas si había alguna región activa. Igual que
+    // en el toque dentro del mapa, hace falta distinguir un toque real de
+    // un arrastre: cerrar ya en touchstart hacía que el simple gesto de
+    // empezar a hacer scroll con el dedo apoyado fuera del mapa (p. ej. en
+    // el panel, para bajar a ver la lista de esa misma región) cerrase la
+    // selección antes de que diera tiempo a desplazarse.
+    let inicioToqueFuera = null;
+
     document.addEventListener('touchstart', (e) => {
-      if (regionHover && !mapWrap.contains(e.target)) {
-        cerrarTarjetasTactiles();
+      if (!regionHover || mapWrap.contains(e.target)) {
+        inicioToqueFuera = null;
+        return;
       }
+      const t = e.touches[0];
+      inicioToqueFuera = { x: t.clientX, y: t.clientY };
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!inicioToqueFuera) return;
+      const t = e.changedTouches[0];
+      const dx = Math.abs(t.clientX - inicioToqueFuera.x);
+      const dy = Math.abs(t.clientY - inicioToqueFuera.y);
+      inicioToqueFuera = null;
+      if (dx > 10 || dy > 10) return; // fue scroll/arrastre, no un toque deliberado
+      cerrarTarjetasTactiles();
     }, { passive: true });
   }
 

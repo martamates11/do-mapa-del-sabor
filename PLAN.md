@@ -728,3 +728,22 @@ estrecha partía palabras por la mitad, ej. "87.268 km²" → "87.26" /
 legible sin depender de partir palabras. Se aplica la misma corrección
 preventiva (`grid-template-columns` explícito) a la tarjeta de grupos
 flotante, que tiene la misma estructura de lista y el mismo riesgo.
+
+## 19. Scroll fuera del mapa cerraba la selección en móvil (corregido)
+
+Al tocar una región en móvil/tablet y querer bajar la pantalla para ver
+su lista en el panel de abajo, la selección se perdía antes de llegar:
+el cierre "al tocar fuera del mapa" (sección 11) se disparaba en
+`touchstart`, así que el simple gesto de apoyar el dedo fuera del mapa
+para empezar a hacer scroll (aunque fuera claramente un arrastre, no un
+toque) ya cerraba las tarjetas y deseleccionaba la región.
+
+Se corrige aplicando la misma distinción toque-vs-arrastre que ya se usa
+dentro del mapa (`toqueMapa`): en vez de cerrar en `touchstart`, se
+guarda el punto de inicio y se decide en `touchend` según cuánto se ha
+movido el dedo (umbral de 10px) — un desplazamiento mayor es un scroll y
+no cierra nada; un desplazamiento mínimo es un toque deliberado y sí
+cierra. Verificado con Playwright (`Input.dispatchTouchEvent` para
+simular la secuencia touchstart→touchmove→touchend): un scroll fuera del
+mapa mantiene la selección, un toque real fuera del mapa la sigue
+cerrando.
