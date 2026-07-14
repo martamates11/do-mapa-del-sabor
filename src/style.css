@@ -389,15 +389,23 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   margin-bottom: 0.3rem;
 }
 
-.productos-flotantes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.28rem; }
+/* grid-template-columns explícito (y min-width:0 en la fila/celdas más
+   abajo): sin esto, un nombre de grupo largo ("Legumbres, arroces y
+   cereales") puede forzar el ancho de la columna implícita del grid —y
+   por tanto el de todas las filas, incluida la tarjeta— por el mismo
+   "blowout" ya visto en el grid del explorador y el selector de modo. */
+.productos-flotantes ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.28rem; }
 
 .productos-flotantes li {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 0.7rem;
+  min-width: 0;
   color: var(--ink-2);
 }
+
+.productos-flotantes li span:first-child { min-width: 0; overflow-wrap: break-word; }
 
 .productos-flotantes .pf-cont { font-family: var(--serif); color: var(--oro); }
 
@@ -430,10 +438,20 @@ main { padding: 0 clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; margin: 0 auto
   color: var(--ink);
 }
 
-.info-region dl { margin: 0; display: grid; gap: 0.24rem; }
-.info-region dl > div { display: flex; justify-content: space-between; gap: 0.6rem; }
+/* grid-template-columns explícito: sin esto, la descripción del clima
+   (texto libre, más largo que el resto de valores) puede forzar el ancho
+   de la columna implícita del grid —y con ella el de todas las filas,
+   incluso las cortas como "Altitud"— por fuera del borde derecho de la
+   tarjeta ("blowout", el mismo problema ya visto en el grid del
+   explorador y el selector de modo).
+   Etiqueta y valor se apilan (en vez de ir en la misma línea, uno a cada
+   lado) porque la tarjeta es demasiado estrecha para las dos cosas: iban
+   demasiado apretadas y forzaban a partir palabras por la mitad
+   ("87.268 km²" → "87.26" / "8 km²"). */
+.info-region dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+.info-region dl > div { min-width: 0; }
 .info-region dt { color: var(--ink-3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
-.info-region dd { margin: 0; color: var(--ink-2); font-size: 0.78rem; text-align: right; }
+.info-region dd { margin: 0.05rem 0 0; color: var(--ink-2); font-size: 0.78rem; text-align: left; }
 
 .leyenda {
   display: flex;

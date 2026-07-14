@@ -707,3 +707,24 @@ móvil) y se usa también en las tarjetas de estadística: por debajo de
 gastronómicas" por 🍷 (DOP/IGP/ETG no cambian, ya eran cortas). Verificado
 con Playwright: las 5 tarjetas caben ya en una sola línea sin necesidad
 de desplazar en un iPhone 13.
+
+## 18. Tarjeta de datos geográficos desbordada por la derecha (corregido)
+
+En la tarjeta de datos de la CCAA (extensión, altitud, clima, temperaturas)
+todas las filas se salían por el borde derecho de la tarjeta la misma
+cantidad exacta (~2.6px), incluso las más cortas ("Altitud: 7 m"): mismo
+patrón de "blowout" que en el grid del explorador (sección 14) y el
+selector de modo (sección 17). La causa era el texto libre del clima
+(más largo que el resto), que forzaba el ancho de la columna implícita
+del `<dl>` — al no tener `grid-template-columns` explícito, esa columna
+podía crecer con el contenido, y esa anchura la comparten todas las
+filas por igual.
+
+Se corrige con `grid-template-columns: minmax(0, 1fr)` en el `dl` (mismo
+arreglo que ya se aplicó al `.explorer` en su día). De paso, en vez de
+"encajar" etiqueta y valor en la misma línea (que con la tarjeta tan
+estrecha partía palabras por la mitad, ej. "87.268 km²" → "87.26" /
+"8 km²"), se apilan: la etiqueta arriba y el valor debajo, mucho más
+legible sin depender de partir palabras. Se aplica la misma corrección
+preventiva (`grid-template-columns` explícito) a la tarjeta de grupos
+flotante, que tiene la misma estructura de lista y el mismo riesgo.
